@@ -1,0 +1,25 @@
+PLL_Name	Graphics_and_Video_Controller:inst4|PLL30Mhz:inst6|PLL30Mhz_0002:pll30mhz_inst|altera_pll:altera_pll_i|general[0].gpll~FRACTIONAL_PLL
+PLLJITTER	27
+PLLSPEmax	100
+PLLSPEmin	-100
+
+PLL_Name	Graphics_and_Video_Controller:inst4|PLL30Mhz:inst6|PLL30Mhz_0002:pll30mhz_inst|altera_pll:altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER
+PLLJITTER	NA
+PLLSPEmax	NA
+PLLSPEmin	NA
+
+PLL_Name	NIOS_II_SYSTEM:inst3|nios_system:NiosII|nios_system_clocks:clocks|nios_system_clocks_sys_pll:sys_pll|altera_pll:altera_pll_i|general[0].gpll~FRACTIONAL_PLL
+PLLJITTER	26
+PLLSPEmax	100
+PLLSPEmin	-100
+
+PLL_Name	NIOS_II_SYSTEM:inst3|nios_system:NiosII|nios_system_clocks:clocks|nios_system_clocks_sys_pll:sys_pll|altera_pll:altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER
+PLLJITTER	NA
+PLLSPEmax	NA
+PLLSPEmin	NA
+
+PLL_Name	NIOS_II_SYSTEM:inst3|nios_system:NiosII|nios_system_clocks:clocks|nios_system_clocks_sys_pll:sys_pll|altera_pll:altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER
+PLLJITTER	NA
+PLLSPEmax	NA
+PLLSPEmin	NA
+
