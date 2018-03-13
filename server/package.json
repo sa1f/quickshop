@@ -1,0 +1,22 @@
+{
+  "name": "quickshop",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sa1f/quickshop/"
+  },
+  "license": "MIT",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "express": "^4.16.2",
+    "sequelize": "^4.36.0",
+    "sqlite3": "^3.1.13"
+  },
+  "engines": {
+    "node": "8.x"
+  }
+}
