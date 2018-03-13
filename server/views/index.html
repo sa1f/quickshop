@@ -1,13 +1,50 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>QuickShop</title>
-    <meta name="description" content="A cool thing made with Glitch">
-    <link id="favicon" rel="icon" href="/images/favicon.ico" type="image/x-icon">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head>
-  <body>
-    hi
-  </body>
+
+<head>
+  <title>QuickShop</title>
+  <meta name="description" content="A cool thing made with Glitch">
+  <link id="favicon" rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="/images/favicon.ico" />
+  <link rel="stylesheet" href="/app.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <div class="container">
+    <div class="columns">
+      <div class="column col-6">
+        <h1>QuickShop</h1>
+        <div class="form-group column col-9">
+          <form action="/register" method="POST" enctype="multipart/form-data">
+            <h3>Register</h3>
+            <label class="form-label" for="register-form-name">Name</label>
+            <input class="form-input" type="text" id="register-form-name" name="name" placeholder="Name">
+
+            <label class="form-label" for="register-form-password">Password</label>
+            <input class="form-input" type="password" name="password" id="register-form-password">
+
+            <label class="form-label" for="register-form-picture">Picture</label>
+            <input class="form-input" type="file" name="picture" id="register-form-picture">
+            <input type="submit" value="submit" class="btn btn-primary">
+          </form>
+        </div>
+        <div class="form-group column col-9">
+          <form action="/login" method="POST">
+            <h3>Login</h3>
+            <label class="form-label" for="login-form-name">Name</label>
+            <input class="form-input" type="text" id="login-form-name" name="username" placeholder="Name">
+
+            <label class="form-label" for="login-form-password">Password</label>
+            <input class="form-input" type="password" name="password" id="login-form-password">
+            <button class="btn btn-primary">Submit</button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>
