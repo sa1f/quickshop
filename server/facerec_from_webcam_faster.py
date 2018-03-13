@@ -3,9 +3,27 @@ import cv2
 import requests
 import numpy as np
 from io import StringIO
+from threading import Thread, Event
+
 
 
 video_capture = cv2.VideoCapture(0)
+
+
+class UpdateThread(Thread):
+	def __init__(self, event):
+		Thread.__init__(self)
+		self.stopped = event
+
+	def run(self):
+		while not self.stopped.wait(2):
+			update()
+
+updateStopFlag = Event()
+thread = UpdateThread(updateStopFlag)
+thread.start()
+
+
 
 r = requests.get('http://localhost:3000/encodings')
 
@@ -13,8 +31,18 @@ r = requests.get('http://localhost:3000/encodings')
 #known_face_encodings = [entry['faceEncoding'] for entry in r.json()]
 string_IOs_from_encodings = [StringIO(entry['faceEncoding']) for entry in r.json()]
 known_face_encodings = [np.loadtxt(encoding_string_io) for encoding_string_io in  string_IOs_from_encodings]
-
 known_face_names = [entry['name'] for entry in r.json()]
+
+def update():
+    global r
+    global string_IOs_from_encodings
+    global known_face_encodings
+    global known_face_names
+    r = requests.get('http://localhost:3000/encodings')
+    string_IOs_from_encodings = [StringIO(entry['faceEncoding']) for entry in r.json()]
+    known_face_encodings = [np.loadtxt(encoding_string_io) for encoding_string_io in  string_IOs_from_encodings]
+    known_face_names = [entry['name'] for entry in r.json()]
+
 
 # Initialize some variables
 face_locations = []

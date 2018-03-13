@@ -28,6 +28,24 @@
             <label class="form-label" for="register-form-picture">Picture</label>
             <input class="form-input" type="file" name="picture" id="register-form-picture">
             <input type="submit" value="submit" class="btn btn-primary">
+
+            <img id="preview">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <script src="/imageTools.js"></script>
+<script>
+document.getElementById('register-form-picture').onchange = function(evt) {
+    ImageTools.resize(this.files[0], {
+        width: 320, // maximum width
+        height: 240 // maximum height
+    }, function(blob, didItResize) {
+        // didItResize will be true if it managed to resize it, otherwise false (and will return the original file as 'blob')
+        document.getElementById('preview').src = window.URL.createObjectURL(blob);
+        // you can also now upload this blob using an XHR.
+    });
+};
+</script>
+
+
           </form>
         </div>
         <div class="form-group column col-9">
@@ -39,6 +57,16 @@
             <label class="form-label" for="login-form-password">Password</label>
             <input class="form-input" type="password" name="password" id="login-form-password">
             <button class="btn btn-primary">Submit</button>
+
+          </form>
+        </div>
+        <div class="form-group column col-9">
+          <form action="/deleteUser" method="POST">
+            <h3>Delete User</h3>
+            <label class="form-label" for="delete-user-form-name">Name</label>
+            <input class="form-input" type="text" id="delete-user-form-name" name="name" placeholder="Name">
+
+            <input type="submit" value="submit" class="btn btn-primary">
 
           </form>
         </div>

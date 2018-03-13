@@ -6,6 +6,8 @@ const multer = require('multer');
 const sys = require('util');
 const fs = require('fs');
 const Op= require('sequelize').Op;
+const sharp = require('sharp');
+
 
 
 const spawn = require('child_process').spawn;
@@ -13,6 +15,7 @@ const spawn = require('child_process').spawn;
 // Express init
 const app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('./public'));
 
 // Init db
@@ -112,14 +115,19 @@ var User = db.User;
 app.post('/register', multerUpload.single('picture'), function (req, res) {
     console.log("Register request received from " + JSON.stringify(req.body));
 
-    fs.writeFile("./uploads/" + req.file.originalname, req.file.buffer, "binary", function (err) {
+    sharp(req.file.buffer)
+        .resize(320, 240)
+        .rotate(90)
+        .toFile('./uploads/image2.jpeg');
+
+    fs.writeFile("./uploads/" + "image.jpeg", req.file.buffer, "binary", function (err) {
         if (err) {
             res.send("Could not upload picture");
             console.log(err);
         } else {
             console.log("Saved picture");
 
-            var encoder = spawn('python', ['encode.py', req.file.originalname]);
+            var encoder = spawn('python', ['encode.py', "./uploads/" + "image2.jpeg"]);
 
             encoder.on("exit", function () {
                 var encoding = fs.readFileSync("./uploads/data.txt", "utf8");
@@ -130,8 +138,18 @@ app.post('/register', multerUpload.single('picture'), function (req, res) {
                     picture: req.file.buffer,
                     faceEncoding: encoding
                 }).then(function (user) {
+                    fs.unlink("./uploads/" + "image2.jpeg", (err) =>{
+                        if (err)
+                            throw err;
+                    });
 
-                    res.json(user);
+                    fs.unlink("./uploads/" + "data.txt", (err) =>{
+                        if (err)
+                            throw err;
+                    });
+
+                    res.send("registered");
+                    //res.json(user);
                     //res.json(JSON.stringify(req.file));
                     //res.type('jpeg');
                     //res.end(user.picture, 'binary');
@@ -153,6 +171,17 @@ app.get('/encodings', function(req, res) {
     }).then(users => {
         res.json(users);
     });
+});
+
+app.post('/deleteUser', function(req, res) {
+    console.log(JSON.stringify(req.body));
+    User.destroy({
+        where: {
+            name: req.body.name
+        }
+    }).then(result => {
+        res.json(result);
+    })
 });
 
 app.post('/login', function (req, res) {
