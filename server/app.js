@@ -21,6 +21,12 @@ app.use(express.static('./public'));
 // Init db
 db.sequelize.sync();
 
+var dir = './uploads';
+
+if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+}
+
 // Temp storage for pics
 const multerStorage = multer.memoryStorage();
 const multerUpload = multer({
