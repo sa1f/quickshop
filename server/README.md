@@ -10,4 +10,6 @@ Welcome to the QuickShop Server
 - run `node server.js` to run the server
 - run `python facerec_from_webcam_faster.py` to see the live facial recogntion
 
+If you'd like to see the database contents, open the .sqlite file using [sqlite browser](http://sqlitebrowser.org/)
+
 \ ゜o゜)ノ
