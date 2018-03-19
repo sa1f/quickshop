@@ -3,9 +3,10 @@ import numpy as np
 import sys
 
 image = face_recognition.load_image_file(sys.argv[1])
-image_encoding = face_recognition.face_encodings(image)[0]
+face_encodings = face_recognition.face_encodings(image)
 
-if image_encoding:
-    np.savetxt("./uploads/data.txt", image_encoding)
+if len(face_encodings) > 0:
+    first_encoding = face_encodings[0]
+    np.savetxt("./uploads/data.txt", first_encoding)
 else:
-    open(x, './uploads/data.txt').close()
+    open('./uploads/data.txt', 'a').close()
