@@ -101,6 +101,91 @@
          type = "String";
       }
    }
+   element SHA_addr
+   {
+      datum _sortIndex
+      {
+         value = "16";
+         type = "int";
+      }
+   }
+   element SHA_addr.clk
+   {
+      datum _tags
+      {
+         value = "";
+         type = "String";
+      }
+   }
+   element SHA_addr.s1
+   {
+      datum _tags
+      {
+         value = "";
+         type = "String";
+      }
+      datum baseAddress
+      {
+         value = "16400";
+         type = "String";
+      }
+   }
+   element SHA_din
+   {
+      datum _sortIndex
+      {
+         value = "17";
+         type = "int";
+      }
+   }
+   element SHA_din.s1
+   {
+      datum baseAddress
+      {
+         value = "16416";
+         type = "String";
+      }
+   }
+   element SHA_dout
+   {
+      datum _sortIndex
+      {
+         value = "15";
+         type = "int";
+      }
+   }
+   element SHA_dout.reset
+   {
+      datum _tags
+      {
+         value = "";
+         type = "String";
+      }
+   }
+   element SHA_dout.s1
+   {
+      datum baseAddress
+      {
+         value = "16384";
+         type = "String";
+      }
+   }
+   element SHA_status
+   {
+      datum _sortIndex
+      {
+         value = "18";
+         type = "int";
+      }
+   }
+   element SHA_status.s1
+   {
+      datum baseAddress
+      {
+         value = "16432";
+         type = "String";
+      }
+   }
    element character_lcd_0
    {
       datum _sortIndex
@@ -338,7 +423,7 @@
  <parameter name="hideFromIPCatalog" value="false" />
  <parameter name="lockedInterfaceDefinition" value="" />
  <parameter name="maxAdditionalLatency" value="1" />
- <parameter name="projectName" value="DE1_SOC_NIOS.qpf" />
+ <parameter name="projectName" value="" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="0" />
  <parameter name="testBenchDutName" value="" />
@@ -384,6 +469,26 @@
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
  <interface name="sdram" internal="sdram.wire" type="conduit" dir="end" />
  <interface name="sdram_clk" internal="clocks.sdram_clk" type="clock" dir="start" />
+ <interface
+   name="sha_addr"
+   internal="SHA_addr.external_connection"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="sha_din"
+   internal="SHA_din.external_connection"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="sha_dout"
+   internal="SHA_dout.external_connection"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="sha_status"
+   internal="SHA_status.external_connection"
+   type="conduit"
+   dir="end" />
  <interface
    name="switches"
    internal="switches.external_connection"
@@ -448,6 +553,62 @@
   <parameter name="simDoTestBenchWiring" value="false" />
   <parameter name="simDrivenValue" value="0" />
   <parameter name="width" value="3" />
+ </module>
+ <module name="SHA_addr" kind="altera_avalon_pio" version="15.0" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="50000000" />
+  <parameter name="direction" value="Output" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="0" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="32" />
+ </module>
+ <module name="SHA_din" kind="altera_avalon_pio" version="15.0" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="50000000" />
+  <parameter name="direction" value="Input" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="0" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="32" />
+ </module>
+ <module name="SHA_dout" kind="altera_avalon_pio" version="15.0" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="50000000" />
+  <parameter name="direction" value="Output" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="0" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="32" />
+ </module>
+ <module name="SHA_status" kind="altera_avalon_pio" version="15.0" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="50000000" />
+  <parameter name="direction" value="Input" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="0" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="32" />
  </module>
  <module
    name="character_lcd_0"
@@ -526,7 +687,7 @@
   <parameter name="cpuReset" value="false" />
   <parameter name="customInstSlavesSystemInfo" value="&lt;info/&gt;" />
   <parameter name="dataAddrWidth" value="28" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='nios2_qsys_0.jtag_debug_module' start='0x1800' end='0x2000' /><slave name='switches.s1' start='0x2000' end='0x2010' /><slave name='leds.s1' start='0x2010' end='0x2020' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x2020' end='0x2028' /><slave name='HEX0_1.s1' start='0x2030' end='0x2040' /><slave name='HEX2_3.s1' start='0x2040' end='0x2050' /><slave name='HEX4_5.s1' start='0x2050' end='0x2060' /><slave name='PushButtons.s1' start='0x2060' end='0x2070' /><slave name='timer_0.s1' start='0x2080' end='0x20A0' /><slave name='timer_1.s1' start='0x20A0' end='0x20C0' /><slave name='character_lcd_0.avalon_lcd_slave' start='0x20C0' end='0x20C2' /><slave name='to_external_bus_bridge_0.avalon_slave' start='0x4000000' end='0x4010000' /><slave name='sdram.s1' start='0x8000000' end='0xC000000' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='nios2_qsys_0.jtag_debug_module' start='0x1800' end='0x2000' /><slave name='switches.s1' start='0x2000' end='0x2010' /><slave name='leds.s1' start='0x2010' end='0x2020' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x2020' end='0x2028' /><slave name='HEX0_1.s1' start='0x2030' end='0x2040' /><slave name='HEX2_3.s1' start='0x2040' end='0x2050' /><slave name='HEX4_5.s1' start='0x2050' end='0x2060' /><slave name='PushButtons.s1' start='0x2060' end='0x2070' /><slave name='timer_0.s1' start='0x2080' end='0x20A0' /><slave name='timer_1.s1' start='0x20A0' end='0x20C0' /><slave name='character_lcd_0.avalon_lcd_slave' start='0x20C0' end='0x20C2' /><slave name='SHA_dout.s1' start='0x4000' end='0x4010' /><slave name='SHA_addr.s1' start='0x4010' end='0x4020' /><slave name='SHA_din.s1' start='0x4020' end='0x4030' /><slave name='SHA_status.s1' start='0x4030' end='0x4040' /><slave name='to_external_bus_bridge_0.avalon_slave' start='0x4000000' end='0x4010000' /><slave name='sdram.s1' start='0x8000000' end='0xC000000' /></address-map>]]></parameter>
   <parameter name="dcache_bursts" value="false" />
   <parameter name="dcache_lineSize" value="32" />
   <parameter name="dcache_numTCDM" value="0" />
@@ -841,6 +1002,42 @@
  <connection
    kind="avalon"
    version="15.0"
+   start="nios2_qsys_0.data_master"
+   end="SHA_dout.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x4000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.0"
+   start="nios2_qsys_0.data_master"
+   end="SHA_addr.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x4010" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.0"
+   start="nios2_qsys_0.data_master"
+   end="SHA_din.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x4020" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.0"
+   start="nios2_qsys_0.data_master"
+   end="SHA_status.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x4030" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.0"
    start="nios2_qsys_0.instruction_master"
    end="nios2_qsys_0.jtag_debug_module">
   <parameter name="arbitrationPriority" value="1" />
@@ -886,6 +1083,14 @@
    version="15.0"
    start="clocks.sys_clk"
    end="character_lcd_0.clk" />
+ <connection kind="clock" version="15.0" start="clocks.sys_clk" end="SHA_dout.clk" />
+ <connection kind="clock" version="15.0" start="clocks.sys_clk" end="SHA_addr.clk" />
+ <connection kind="clock" version="15.0" start="clocks.sys_clk" end="SHA_din.clk" />
+ <connection
+   kind="clock"
+   version="15.0"
+   start="clocks.sys_clk"
+   end="SHA_status.clk" />
  <connection
    kind="interrupt"
    version="15.0"
@@ -975,6 +1180,26 @@
    kind="reset"
    version="15.0"
    start="clk_0.clk_reset"
+   end="SHA_dout.reset" />
+ <connection
+   kind="reset"
+   version="15.0"
+   start="clk_0.clk_reset"
+   end="SHA_addr.reset" />
+ <connection
+   kind="reset"
+   version="15.0"
+   start="clk_0.clk_reset"
+   end="SHA_din.reset" />
+ <connection
+   kind="reset"
+   version="15.0"
+   start="clk_0.clk_reset"
+   end="SHA_status.reset" />
+ <connection
+   kind="reset"
+   version="15.0"
+   start="clk_0.clk_reset"
    end="nios2_qsys_0.reset_n" />
  <connection
    kind="reset"
@@ -1041,6 +1266,26 @@
    version="15.0"
    start="nios2_qsys_0.jtag_debug_module_reset"
    end="to_external_bus_bridge_0.reset" />
+ <connection
+   kind="reset"
+   version="15.0"
+   start="nios2_qsys_0.jtag_debug_module_reset"
+   end="SHA_dout.reset" />
+ <connection
+   kind="reset"
+   version="15.0"
+   start="nios2_qsys_0.jtag_debug_module_reset"
+   end="SHA_status.reset" />
+ <connection
+   kind="reset"
+   version="15.0"
+   start="nios2_qsys_0.jtag_debug_module_reset"
+   end="SHA_din.reset" />
+ <connection
+   kind="reset"
+   version="15.0"
+   start="nios2_qsys_0.jtag_debug_module_reset"
+   end="SHA_addr.reset" />
  <connection
    kind="reset"
    version="15.0"

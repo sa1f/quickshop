@@ -53,7 +53,13 @@ ENTITY NIOS_II_SYSTEM IS
 		-- Hex Display
 		Hex0_1			: out   std_logic_vector(7 downto 0) ;
 		Hex2_3			: out   std_logic_vector(7 downto 0) ;
-		Hex4_5			: out   std_logic_vector(7 downto 0) 
+		Hex4_5			: out   std_logic_vector(7 downto 0) ;
+
+		-- SHA Core
+		sha_dout 		: out 	std_logic_vector(31 downto 0) ;
+		sha_addr 		: out 	std_logic_vector(31 downto 0) ;
+		sha_din 		: in 	std_logic_vector(31 downto 0) ;
+		sha_status 		: in 	std_logic_vector(31 downto 0) 
 	);
 END NIOS_II_SYSTEM;
 
@@ -103,7 +109,13 @@ ARCHITECTURE NIOS_II_SYSTEM_rtl OF NIOS_II_SYSTEM IS
 		-- Hex display signals
 		hex0_1_export          : out   std_logic_vector(7 downto 0);                     -- export
 		hex2_3_export          : out   std_logic_vector(7 downto 0);                     -- export
-		hex4_5_export          : out   std_logic_vector(7 downto 0)                    	-- export
+		hex4_5_export          : out   std_logic_vector(7 downto 0);                     -- export
+
+		-- sha core signals
+		sha_dout_export     : out   std_logic_vector(31 downto 0);                    -- export
+		sha_addr_export     : out   std_logic_vector(31 downto 0);                    -- export
+		sha_din_export      : in    std_logic_vector(31 downto 0) := (others => 'X'); -- export
+		sha_status_export   : in    std_logic_vector(31 downto 0) := (others => 'X')  -- export
 	);
 	END COMPONENT;
 	
@@ -154,6 +166,11 @@ BEGIN
 		
 		hex0_1_export 			=> Hex0_1,
 		hex2_3_export 			=> Hex2_3,
-		hex4_5_export 			=> Hex4_5
+		hex4_5_export 			=> Hex4_5,
+
+		sha_dout_export     => sha_dout,      --     sha_dout.export
+		sha_addr_export     => sha_addr,      --     sha_addr.export
+		sha_din_export      => sha_din,       --      sha_din.export
+		sha_status_export   => sha_status     --   sha_status.export
 	);
 END NIOS_II_SYSTEM_rtl;

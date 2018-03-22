@@ -7,8 +7,7 @@
    <irq preferredWidth="34" />
   </columns>
  </systemtable>
- <library
-   expandedCategories="Library/Bitec,Library,Library/Basic Functions/On Chip Memory,Project,Library/Basic Functions" />
- <window width="1936" height="1056" x="-8" y="-8" />
+ <library expandedCategories="Library,Project" />
+ <window width="974" height="1047" x="-7" y="0" />
  <generation synthesis="VHDL" block_symbol_file="1" />
 </preferences>

@@ -882,6 +882,7 @@ set_instance_assignment -name PACKAGE_SKEW_COMPENSATION OFF -to HPS_DDR3_WE_N
 set_instance_assignment -name PACKAGE_SKEW_COMPENSATION OFF -to HPS_DDR3_RESET_N
 set_instance_assignment -name PACKAGE_SKEW_COMPENSATION OFF -to HPS_DDR3_CK_P
 set_instance_assignment -name PACKAGE_SKEW_COMPENSATION OFF -to HPS_DDR3_CK_N
+set_global_assignment -name VERILOG_FILE ../design/verilog/SHA_core.v
 set_global_assignment -name VERILOG_FILE ../design/verilog/pwm_controller.v
 set_global_assignment -name QIP_FILE ../design/qsys/pwm_pll/synthesis/pwm_pll.qip
 set_global_assignment -name VHDL_FILE ../design/vhdl/PLL30Mhz.vhd
