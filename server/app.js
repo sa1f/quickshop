@@ -1,50 +1,60 @@
-const express = require('express');
-const bodyParser = require('body-parser')
-const bcrypt = require('bcrypt');
-const db = require('./models');
-const multer = require('multer');
-const sys = require('util');
-const fs = require('fs');
-const Op= require('sequelize').Op;
-const sharp = require('sharp');
+// -- Import modules --
+const express = require('express'); // Web server
+const bodyParser = require('body-parser') // Form data parsing
+const bcrypt = require('bcrypt'); // Password hashing
+const multer = require('multer'); // Process file uploads (used for image uploads)
+const fs = require('fs'); // Filesystem access
+const Op = require('sequelize').Op; // Used in db queries for 'not equal' etc. 
+const sharp = require('sharp'); // Image manipulation (Used for resizing uploaded images)
+const spawn = require('child_process').spawn; // Used to spawn the face encoding python process
 
 
-
-const spawn = require('child_process').spawn;
-
-// Express init
+// -- Initialize Express --
 const app = express();
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.use(express.static('./public'));
 
-// Init db
+
+// -- Initialize Database and sync models
+const db = require('./models');
 db.sequelize.sync();
+const User = db.User;
+const Session = db.Session;
 
-var dir = './uploads';
 
-if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
-}
-
-// Temp storage for pics
+// -- Temp storage for pics --
 const multerStorage = multer.memoryStorage();
-const multerUpload = multer({
+const upload = multer({
     storage: multerStorage
 });
+const uploadsDirectory = './uploads/';
 
+// create folder if it doesn't exist
+if (!fs.existsSync(uploadsDirectory)) {
+    fs.mkdirSync(uploadsDirectory);
+}
+
+
+// -- Password Hashing Helpers --
 function randString() {
     return Math.random().toString(36).substr(2);
 }
 
-function generatePassword(password) {
+const saltRounds = 12;
+
+function generatePasswordHash(password) {
     return bcrypt.hashSync(password, saltRounds);
 }
 
-function getOrGenerateToken(username) {
+
+// -- User Management Functions --
+function getOrGenerateSessionToken(username) {
     return Session.findOne({
         where: {
-            username: username,
+            name: username,
             valid: true
         }
     }).then(session => {
@@ -55,10 +65,14 @@ function getOrGenerateToken(username) {
                 valid: true
             }).then(session => {
                 return session.token;
+            }).catch(err => {
+                console.log("An error occurred while trying to create a new session token");
             })
         } else {
             return session.token;
         }
+    }).catch(err => {
+        console.log("An error occurred while trying to find an existing session token")
     });
 }
 
@@ -113,60 +127,91 @@ function authenticate(token) {
     });
 }
 
+
+// -- Process Requests --
+function sendError(res, message, errorCode) {
+    // Default http code is internal server error (500)
+    let code = errorCode || 500;
+    console.log(message);
+    res.status(code).json(message);
+}
+
 app.get("/", function (req, res) {
     res.sendFile(__dirname + '/views/index.html');
 })
-var User = db.User;
 
-app.post('/register', multerUpload.single('picture'), function (req, res) {
+app.post('/register', upload.single('picture'), function (req, res) {
+    if (!req.body.name) {
+        return sendError(res, "Please enter a name", 422)
+    }
+    if (!req.body.password) {
+        return sendError(res, "Please enter a password", 422)
+    }
+    if (!req.file || !req.file.mimetype.includes("image")) {
+        return sendError(res, "You need to upload a jpeg image for the picture field", 422);
+    }
+    console.log(req.file.mimetype);
     console.log("Register request received from " + JSON.stringify(req.body));
 
+    // Resize the image
     sharp(req.file.buffer)
         .resize(320, 240)
-        .rotate(90)
-        .toFile('./uploads/image2.jpeg');
+        .toFile(uploadsDirectory + 'image.jpeg')
+        .then(() => console.log("Saved picture successfully"))
+        .catch(err => {
+            return sendError(res, "Something happened while trying to resize image");
+        });
 
-    fs.writeFile("./uploads/" + "image.jpeg", req.file.buffer, "binary", function (err) {
-        if (err) {
-            res.send("Could not upload picture");
-            console.log(err);
-        } else {
-            console.log("Saved picture");
+    // Encode single face 
+    var encoder = spawn('python', ['encode.py', uploadsDirectory + "image.jpeg"]);
+    encoder.on("exit", function () {
+        if (!fs.existsSync(uploadsDirectory + "face_encoding.txt")) {
+            fs.unlink(uploadsDirectory + "image.jpeg", (err) => {
+                if (err)
+                   return sendError(res, err);
+            });
 
-            var encoder = spawn('python', ['encode.py', "./uploads/" + "image2.jpeg"]);
+            return sendError(res, "Could not find face_encoding.txt file. Please make sure " + 
+                            "encode.py and that a face exists in the image you uploaded.");
+        }
 
-            encoder.on("exit", function () {
-                var encoding = fs.readFileSync("./uploads/data.txt", "utf8");
+        var encoding = fs.readFileSync(uploadsDirectory + "face_encoding.txt", "utf8");
 
+        User.findOne({
+            where: {
+                name: req.body.name
+            }
+        }).then(user =>{
+            if (user)
+                return sendError(res, "User with name " + req.body.name + " already exists", 422);
+            else {
                 User.create({
                     name: req.body.name,
-                    passwordHash: req.body.password,
+                    passwordHash: generatePasswordHash(req.body.password),
                     picture: req.file.buffer,
                     faceEncoding: encoding
                 }).then(function (user) {
-                    fs.unlink("./uploads/" + "image2.jpeg", (err) =>{
+                    fs.unlink(uploadsDirectory + "image.jpeg", (err) => {
                         if (err)
-                            throw err;
+                           return sendError(res, err);
                     });
-
-                    fs.unlink("./uploads/" + "data.txt", (err) =>{
+        
+                    fs.unlink(uploadsDirectory + "face_encoding.txt", (err) => {
                         if (err)
-                            throw err;
+                            return sendError(res, err);
                     });
-
-                    res.send("registered");
-                    //res.json(user);
-                    //res.json(JSON.stringify(req.file));
-                    //res.type('jpeg');
-                    //res.end(user.picture, 'binary');
-                    //res.send(new Buffer(user.picture, 'binary'));
+        
+                    res.send("Successfully Registered User");
+                }).catch(err => {
+                    sendError(res, err);
                 });
-            });
-        }
+            }
+        });
+        
     });
 });
 
-app.get('/encodings', function(req, res) {
+app.get('/encodings', function (req, res) {
     User.findAll({
         attributes: ['name', 'faceEncoding'],
         where: {
@@ -179,7 +224,7 @@ app.get('/encodings', function(req, res) {
     });
 });
 
-app.post('/deleteUser', function(req, res) {
+app.post('/deleteUser', function (req, res) {
     console.log(JSON.stringify(req.body));
     User.destroy({
         where: {
@@ -191,7 +236,7 @@ app.post('/deleteUser', function(req, res) {
 });
 
 app.post('/login', function (req, res) {
-    console.log("Login received from " + req.body.username);
+    console.log("Login received from " + req.body.name);
     loginUser(req.body.username, req.body.password).then(authenticated => {
         if (authenticated) {
             getOrGenerateToken(req.body.username).then(token => {
@@ -202,36 +247,5 @@ app.post('/login', function (req, res) {
         }
     })
 });
-
-/*
-app.post('/register', function(req, res) {
-    console.log("Register request received from " + req.body.username);
-    registerUser(req.body.username, req.body.password).then(authenticated => {
-        if (authenticated != null) {
-            getOrGenerateToken(req.body.username).then(token => {
-                res.send(token);
-            });
-        }
-        else {
-            res.status(401).send('Couldn\'t register that account');
-        }
-    })
-});
-*/
-
-app.post('/storeFavourite', function (req, res) {
-    console.log("Store fav request received from " + req.body.token);
-    authenticate(req.body.token).then(session => {
-        if (session) {
-            storeHouse(req.body.mlsid, req.body.houseJson, session.username).then(stored => {
-                res.send("stored");
-            });
-        } else {
-            res.status(401).send("not authenticated");
-        }
-    })
-});
-
-
 
 module.exports = app;

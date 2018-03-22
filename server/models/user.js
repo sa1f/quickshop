@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     faceEncoding: DataTypes.STRING,
   }, {});
   User.associate = function(models) {
-    // associations can be defined here
+    User.hasMany(models.Session);
+    User.hasMany(models.Purchase);
   };
   return User;
 };
