@@ -129,13 +129,13 @@ always @(posedge clk_in or negedge rst_in) begin
                     state <= CALC1;
                 end
                 else begin
-                    schedule[index] <=  ((schedule[index-2] >> 17) | (schedule[index-2] << (32-17))) +
-                                        ((schedule[index-2] >> 19) | (schedule[index-2] << (32-19))) +
-                                        (schedule[index-2] >> 10) + schedule[index-7] +
+                    schedule[index] <=  (((schedule[index-2] >> 17) | (schedule[index-2] << (32-17))) ^
+                                        ((schedule[index-2] >> 19) | (schedule[index-2] << (32-19))) ^
+                                        (schedule[index-2] >> 10)) + schedule[index-7] +
 
-                                        ((schedule[index-15] >> 7) | (schedule[index-15] << (32-7))) +
-                                        ((schedule[index-15] >> 18) | (schedule[index-15] << (32-18))) +
-                                        (schedule[index-15] >> 3) + schedule[index-16];
+                                        (((schedule[index-15] >> 7) | (schedule[index-15] << (32-7))) ^
+                                        ((schedule[index-15] >> 18) | (schedule[index-15] << (32-18))) ^
+                                        (schedule[index-15] >> 3)) + schedule[index-16];
                     index <= index + 1;
                 end
             end
@@ -145,16 +145,16 @@ always @(posedge clk_in or negedge rst_in) begin
                     state <= COMPLETE;
                 end
                 else begin
-                    tempWords[0] <= ((e >> 6) | e << (32 - 6)) + 
-                                    ((e >> 11) | e << (32 - 11)) + 
-                                    ((e >> 25) | e << (32 - 25)) +
-                                    (e & f) + (~e & g) + h + hashConstants[index] +
+                    tempWords[0] <= (((e >> 6) | e << (32 - 6)) ^ 
+                                    ((e >> 11) | e << (32 - 11)) ^ 
+                                    ((e >> 25) | e << (32 - 25))) +
+                                    ((e & f) ^ (~e & g)) + h + hashConstants[index] +
                                     schedule[index];
 
-                    tempWords[1] <= ((a >> 2) | a << (32 - 2)) + 
-                                    ((a >> 13) | a << (32 - 13)) + 
-                                    ((a >> 22) | a << (32 - 22)) + 
-                                    (a & b) + (a & c) + (b & c);
+                    tempWords[1] <= (((a >> 2) | a << (32 - 2)) ^ 
+                                    ((a >> 13) | a << (32 - 13)) ^ 
+                                    ((a >> 22) | a << (32 - 22))) + 
+                                    ((a & b) ^ (a & c) ^ (b & c));
                     state <= CALC2;
                 end
             end
