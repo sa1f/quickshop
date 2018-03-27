@@ -24,13 +24,13 @@ db.sequelize.sync();
 const User = db.User;
 const Session = db.Session;
 
-
 // -- Temp storage for pics --
 const multerStorage = multer.memoryStorage();
 const upload = multer({
     storage: multerStorage
 });
 const uploadsDirectory = './uploads/';
+const registerPictureFilePath = uploadsDirectory + "register.jpg";
 
 // create folder if it doesn't exist
 if (!fs.existsSync(uploadsDirectory)) {
@@ -145,15 +145,6 @@ app.get("/", function (req, res) {
 })
 
 app.post('/register', upload.single('picture'), function (req, res) {
-    // TODO Rui: Temp code for client app to support register without pic upload. Will remove once the client app supports it. 
-    // console.log("Register request received from " + JSON.stringify(req.body));
-    // User.create({
-    //                 name: req.body.name,
-    //                 passwordHash: generatePasswordHash(req.body.password),
-    //                 picture: null,
-    //                 faceEncoding: null
-    //             });
-
     if (!req.body.name) {
         return sendError(res, "Please enter a name", 422)
     }
@@ -163,32 +154,34 @@ app.post('/register', upload.single('picture'), function (req, res) {
     if (!req.file || !req.file.mimetype.includes("image")) {
         return sendError(res, "You need to upload a jpeg image for the picture field", 422);
     }
-    console.log(req.file.mimetype);
     console.log("Register request received from " + JSON.stringify(req.body));
 
     // Resize the image
     sharp(req.file.buffer)
         .resize(320, 240)
-        .toFile(uploadsDirectory + 'image.jpeg')
-        .then(() => console.log("Saved picture successfully"))
+        .toFile(registerPictureFilePath)
+        .then(() => console.log("Saved picture successfully at " + registerPictureFilePath))
         .catch(err => {
             return sendError(res, "Something happened while trying to resize image");
         });
 
-    // Encode single face 
-    var encoder = spawn('python', ['encode.py', uploadsDirectory + "image.jpeg"]);
-    encoder.on("exit", function () {
-        if (!fs.existsSync(uploadsDirectory + "face_encoding.txt")) {
-            fs.unlink(uploadsDirectory + "image.jpeg", (err) => {
-                if (err)
-                   return sendError(res, err);
-            });
+    // Note from Rui: The client app is able to send picture data to server during registration and is able to save the picture in ./uploads successfully. However,
+    // when the server calls unlink(), it throws error and the picture file in ./uploads is lost. To ensure the client app could support picture upload,
+    // I commented this part of code. Uncomment this once this is fixed. 
+    // Encode single face
+    // var encoder = spawn('python', ['encode.py', registerPictureFilePath]);
+    // encoder.on("exit", function () {
+    //     if (!fs.existsSync(uploadsDirectory + "face_encoding.txt")) {
+    //         fs.unlink(registerPictureFilePath, (err) => {
+    //             if (err)
+    //                return sendError(res, err);
+    //         });
 
-            return sendError(res, "Could not find face_encoding.txt file. Please make sure " + 
-                            "encode.py and that a face exists in the image you uploaded.");
-        }
+    //         return sendError(res, "Could not find face_encoding.txt file. Please make sure " + 
+    //                         "encode.py and that a face exists in the image you uploaded.");
+    //     }
 
-        var encoding = fs.readFileSync(uploadsDirectory + "face_encoding.txt", "utf8");
+    //     var encoding = fs.readFileSync(uploadsDirectory + "face_encoding.txt", "utf8");
 
         User.findOne({
             where: {
@@ -202,19 +195,22 @@ app.post('/register', upload.single('picture'), function (req, res) {
                     name: req.body.name,
                     passwordHash: generatePasswordHash(req.body.password),
                     picture: req.file.buffer,
-                    faceEncoding: encoding
+                    faceEncoding: null,
+                    // TODO: Uncomment once the issue above is fixed.
+                    // faceEncoding: encoding
                 }).then(function (user) {
-                    fs.unlink(uploadsDirectory + "image.jpeg", (err) => {
-                        if (err)
-                           return sendError(res, err);
-                    });
+                    // TODO: Uncomment once the issue above is fixed.
+                    // fs.unlink(registerPictureFilePath, (err) => {
+                    //     if (err)
+                    //        return sendError(res, err);
+                    // });
         
-                    fs.unlink(uploadsDirectory + "face_encoding.txt", (err) => {
-                        if (err)
-                            return sendError(res, err);
-                    });
+                    // fs.unlink(uploadsDirectory + "face_encoding.txt", (err) => {
+                    //     if (err)
+                    //         return sendError(res, err);
+                    // });
         
-                    res.send("Successfully Registered User");
+                    res.json({ "message" : "Successfully Registered User"});
                 }).catch(err => {
                     sendError(res, err);
                 });
@@ -222,7 +218,7 @@ app.post('/register', upload.single('picture'), function (req, res) {
         });
         
     });
-});
+// });
 
 app.get('/encodings', function (req, res) {
     User.findAll({
@@ -252,6 +248,7 @@ app.post('/login', function (req, res) {
     console.log("Login received from " + req.body.username);
     loginUser(req.body.username, req.body.password).then(authenticated => {
         if (authenticated) {
+            console.log("Login successfully");
             res.json({"token" : "Success"});
 
             // TODO: getOrGenerateToken is not defined. Return sucess for now.
@@ -260,6 +257,7 @@ app.post('/login', function (req, res) {
             //     res.json({"token" : token});
             // });
         } else {
+            console.log("Login failed");
             res.status(404).json({"token" : "Failed"});
         }
     })
