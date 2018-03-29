@@ -26,6 +26,7 @@ private:
 public:
     SHA256(uint32_t baseAddr);
     std::vector<uint8_t> getMessage();
+    std::vector<uint8_t> padMessage(uint32_t nonce);
     uint64_t getMessageLength();
     void sendMessage(std::vector<uint8_t> message);
     std::vector<uint32_t> getHash(std::vector<uint32_t> message);

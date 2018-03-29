@@ -45,12 +45,34 @@ int main(void)
 {
 	while (1) {
 		// poll for incoming data to hash
-		std::vector<uint8_t> message = sha256.getMessage();
-
+		uint32_t nonce = 0;
+		int i;
+		sha256.getMessage();
+		std::vector<uint8_t> message = sha256.padMessage(nonce);
+				printf("\nHash: \n\t");
+				for (i = 0; i < message.size(); i++)
+				{
+					printf("%X", message[i]);
+				}
 		// cast to 32 bit list
 		std::vector<uint32_t> message32 = convertVec8to32(message);
+
 		// run SHA256
 		std::vector<uint32_t> hash32 = sha256.getHash(message32);
+
+
+		while (hash32[0] >> 24 != 0)
+		{
+			nonce++;
+			message = sha256.padMessage(nonce);
+			message32 = convertVec8to32(message);
+			hash32 = sha256.getHash(message32);
+//			printf("\nHash: \n\t");
+//			for (i = 0; i < hash32.size(); i++)
+//			{
+//				printf("%08X", hash32[i]);
+//			}
+		}
 		// cast to 8 bit list
 		std::vector<uint8_t> hash = convertVec32to8(hash32);
 

@@ -43,6 +43,34 @@ void SHA256::sendMessage(std::vector<uint8_t> message)
 		printf("%02X", message[i]);
 		putChar(message[i]);
 	}
+	putChar((uint8_t)'\n');
+}
+
+std::vector<uint8_t> SHA256::padMessage(uint32_t nonce)
+{
+	std::vector<uint8_t> message(mRxData.begin(), mRxData.end());
+
+	// add nonce
+	message.push_back((nonce >> 24) & 0xFF);
+	message.push_back((nonce >> 16) & 0xFF);
+	message.push_back((nonce >> 8) & 0xFF);
+	message.push_back(nonce & 0xFF);
+
+	// pad message with ending bit and 0s
+	message.push_back((0x80 & 0xFF));
+	while ((message.size()*8) % 512 != 448)
+	{
+		message.push_back(0);
+	}
+
+	// put message length at the end
+	int i;
+	for (i = 7; i >= 0; i--)
+	{
+		message.push_back((uint8_t)((mMessageLength >> i*8)) & 0xFF);
+	}
+
+	return message;
 }
 
 std::vector<uint8_t> SHA256::getMessage()
@@ -63,21 +91,6 @@ std::vector<uint8_t> SHA256::getMessage()
 		mMessageLength+=8;
 		data = getChar();
 	}
-
-	// pad message with ending bit and 0s
-	mRxData.push_back((0x80 & 0xFF));
-	while ((mRxData.size()*8) % 512 != 448)
-	{
-		mRxData.push_back(0);
-	}
-
-	// put message length at the end
-	int i;
-	for (i = 7; i >= 0; i--)
-	{
-		mRxData.push_back((uint8_t)((mMessageLength >> i*8)) & 0xFF);
-	}
-
 	return mRxData;
 }
 
@@ -121,6 +134,8 @@ std::vector<uint32_t> SHA256::getHash(std::vector<uint32_t> message)
 	 	uint32_t data = *SHA_rx;
 	 	hash.push_back(data);
 	 }
+	 // put SHA core back in idle state
+	 *SHA_addr = 0x00000000;
 	 return hash;
 }
 
