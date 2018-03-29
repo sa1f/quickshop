@@ -25,6 +25,11 @@ public:
     int getLat();
     int getLong();
 
+    uint8_t GPSTestForReceivedData(void);
+    uint8_t putcharGPS(uint8_t c);
+    uint8_t getcharGPS(void);
+    void sendPacket(std::string cmd);
+
 private:    
 
     char GPSData[300];
@@ -51,10 +56,7 @@ private:
     volatile uint8_t* mGPS_Baud; 
 
 
-    uint8_t GPSTestForReceivedData(void);
-    uint8_t putcharGPS(uint8_t c);
-    uint8_t getcharGPS(void);
-    void sendPacket(std::string cmd);
+
     std::string genChecksum(std::string cmd);
     size_t copyCoords(uint32_t elementCounter, size_t position);
     int swapEndian(char *s);

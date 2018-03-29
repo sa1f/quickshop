@@ -6,6 +6,11 @@
 #define TIMER_TIMESTAMP	0x00002060
 #define TIMER_HARDWARE	0x00002080
 
+#define SHA_tx					(volatile uint32_t *)(0x80004000)
+#define SHA_addr				(volatile uint32_t *)(0x80004010)
+#define SHA_rx					(volatile uint32_t *)(0x80004020)
+#define SHA_status	 			(volatile uint32_t *)(0x80004030)
+
 #define RS232_Control 			(volatile unsigned char *)(0x84000200)
 #define RS232_Status  			(volatile unsigned char *)(0x84000200)
 #define RS232_TxData  			(volatile unsigned char *)(0x84000202)

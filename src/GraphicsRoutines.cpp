@@ -562,7 +562,7 @@ void Graphics::FrontPanel (){
         std::string purchaseMessage = "You just purchased: " 
                                     + currentPurchase;
 
-        WriteAString(200, 200, purchaseMessage.c_str(), BLACK, 10);
+        WriteAString(200, 200, (char*)purchaseMessage.c_str(), BLACK, 10);
         purchaseAvail = false;
     }
 	//CircleButton(600, 300, 90, light, BLACK, BLACK, &doLight);

@@ -16,8 +16,6 @@ Raspi::Raspi(uint32_t baseAddr){
 
 	// program baud rate generator to use 115k baud
 	*(mRaspi_Baud) = 0x1;
-
-	send_message_nowait("dofile(\"module.lua\")\r\n");
 }
 
 int Raspi::putCharRaspi(char c) {
@@ -41,7 +39,7 @@ void Raspi::sendMessageNowait(std::string message)
 {
 	int i;
 	for(i = 0; i <  message.length(); i++) {
-		putchar_Raspi(message[i]);
+		putCharRaspi(message[i]);
 		//usleep(500);
 	}
 }
@@ -60,7 +58,7 @@ void Raspi::updatePurchases()
 
 std::string Raspi::getPiMessage() {
 	char request[] = "getPurchase";
-	sendMessageNowait(msgString);
+	sendMessageNowait(request);
 	std::string purchase;
 
 	char data = getCharRaspi();

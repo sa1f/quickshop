@@ -18,13 +18,14 @@ private:
 	volatile uint8_t* mRaspi_RxData;
 	volatile uint8_t* mRaspi_Baud;
 
-    int putCharWifi(char c);
+    int putCharRaspi(char c);
 
 public:
     Raspi(uint32_t baseAddr);
     void sendMessageNowait(std::string message);
     int getCharRaspi();
-    std::string Raspi::getPiMessage();
+    std::string getPiMessage();
+    void updatePurchases();
 };
 
 #endif

@@ -1,45 +1,62 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string>
 #include <iostream>
+#include <vector>
 
 #include "../include/memory_map.h"
-#include "../include/touchscreen.h"
-#include "../include/wifi.h"
-#include "../include/graphics.h"
-#include "../include/servo.h"
 #include "../include/globals.h"
-#include "../include/raspi.h"
+#include "../include/sha256.h"
 
-Graphics graphics;
-Servo servo(0x80002030);
-Wifi wifi(0x84000220);
-//GPS gps(0x84000210);
-Raspi raspi(0x84000210);
+SHA256 sha256(0x84000210);
 
+// Assumption that vector a is 32 bit aligned
+// Note, it will be because we pad to align to 512
+std::vector<uint32_t> convertVec8to32(std::vector<uint8_t> a)
+{
+	std::vector<uint32_t> b;
+	int i = 0;
+	for (i = 0; i < a.size(); i+=4)
+	{
+		uint32_t data = (uint32_t)((a[i] << 24) | (a[i+1] << 16) | (a[i+2] << 8) | a[i+3]);
+		b.push_back(data);
+	}
+	return b;
+}
 
-bool purchaseAvail = false;
-std::string currentPurchase = "0";
+// Assumption that vector a is 8 bit aligned
+// Note, it will be because SHA256 is 256 bits
+std::vector<uint8_t> convertVec32to8(std::vector<uint32_t> a)
+{
+	std::vector<uint8_t> b;
+	int i = 0;
+	for (i = 0; i < a.size(); i++)
+	{
+		b.push_back((a[i] >> 24) & 0xFF);
+		b.push_back((a[i] >> 16) & 0xFF);
+		b.push_back((a[i] >> 8) & 0xFF);
+		b.push_back(a[i] & 0xFF);
+	}
+	return b;
+}
 
 int main(void)
 {
-    TouchScreen touchScreen(0x84000230);
-    graphics.FrontPanel();
+	while (1) {
+		// poll for incoming data to hash
+		std::vector<uint8_t> message = sha256.getMessage();
 
-    while(true) {
-        raspi.updatePurchases();
-        if (purchaseAvail)
-            graphcis.FrontPanel();
+		// cast to 32 bit list
+		std::vector<uint32_t> message32 = convertVec8to32(message);
+		// run SHA256
+		std::vector<uint32_t> hash32 = sha256.getHash(message32);
+		// cast to 8 bit list
+		std::vector<uint8_t> hash = convertVec32to8(hash32);
 
-    	touchScreen.GetPress();
-    	TouchScreen::Point p = touchScreen.GetRelease();
-    	std::vector<Graphics::FuncButton> buttons = graphics.getFuncButtons();
-    	for(std::vector<Graphics::FuncButton>::iterator it = buttons.begin(); it != buttons.end(); ++it)
-    		if (p.x >= it->x && p.x <= it->x + it->width &&
-    			p.y >= it->y && p.y <= it->y + it->height) {
-    			it->funcPtr(it->x, it->y, it->width, it->height);
-    			break;
-    	}
-    }
-    return 0;
+		// send back to server
+		sha256.sendMessage(hash);
+	}
 }
+
+
