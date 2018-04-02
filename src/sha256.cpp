@@ -38,23 +38,29 @@ uint8_t SHA256::getChar() {
 void SHA256::sendMessage(std::vector<uint8_t> message)
 {
 	uint32_t i;
-	printf("\nSending via UART: \n\t");
 	for(i = 0; i <  message.size(); i++) {
-		printf("%02X", message[i]);
 		putChar(message[i]);
+		usleep(1000);
 	}
+	putChar((uint8_t)'\r');
+	usleep(1000);
 	putChar((uint8_t)'\n');
+
 }
 
 std::vector<uint8_t> SHA256::padMessage(uint32_t nonce)
 {
 	std::vector<uint8_t> message(mRxData.begin(), mRxData.end());
+	message[0] = message[0] ^ ((nonce >> 24) & 0xFF);
+	message[1] = message[1] ^ ((nonce >> 16) & 0xFF);
+	message[2] = message[2] ^ ((nonce >> 8) & 0xFF);
+	message[3] = message[3] ^ (nonce& 0xFF);
 
 	// add nonce
-	message.push_back((nonce >> 24) & 0xFF);
-	message.push_back((nonce >> 16) & 0xFF);
-	message.push_back((nonce >> 8) & 0xFF);
-	message.push_back(nonce & 0xFF);
+	//	message.push_back((nonce >> 24) & 0xFF);
+	//	message.push_back((nonce >> 16) & 0xFF);
+	//	message.push_back((nonce >> 8) & 0xFF);
+	//	message.push_back(nonce & 0xFF);
 
 	// pad message with ending bit and 0s
 	message.push_back((0x80 & 0xFF));
@@ -99,20 +105,23 @@ uint64_t SHA256::getMessageLength()
 	return mMessageLength;
 }
 
-std::vector<uint32_t> SHA256::getHash(std::vector<uint32_t> message)
+void SHA256::resetHash()
 {
-	 std::vector<uint32_t> hash;
-	 uint32_t data;
-	 int i;
-
 	 // wipe current hash
 	 *SHA_addr = 0xE0000000;
 	 // init hash
 	 *SHA_addr = 0x20000000;
+}
+
+std::vector<uint32_t> SHA256::getHash(std::vector<uint32_t> message, uint32_t start)
+{
+	 std::vector<uint32_t> hash;
+	 uint32_t data;
+	 uint32_t i;
 
 	 // start write sequence
 	 *SHA_addr = 0x40000000;
-	 for (i = 0; i < 16; i++)
+	 for (i = start; i < start + 16; i++)
 	 {
 	 	*SHA_addr = i;
 	 	*SHA_tx = message[i];
