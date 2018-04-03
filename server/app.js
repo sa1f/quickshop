@@ -388,7 +388,7 @@ app.get('/needs_hashing', (request, response) => {
     
 });
 
-app.get('/register_hash', (request, response) => {
+app.post('/register_hash', (request, response) => {
     response.json(request.body);
 });
 //#endregion
