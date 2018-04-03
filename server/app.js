@@ -4,7 +4,7 @@ const bodyParser = require('body-parser') // Form data parsing
 const bcrypt = require('bcrypt'); // Password hashing
 const multer = require('multer'); // Process file uploads (used for image uploads)
 const fs = require('fs'); // Filesystem access
-const Op = require('sequelize').Op; // Used in db queries for 'not equal' etc. 
+const Op = require('sequelize').Op; // Used in db queries for 'not equal' etc.
 const sharp = require('sharp'); // Image manipulation (Used for resizing uploaded images)
 const spawn = require('child_process').spawn; // Used to spawn the face encoding python process
 const consola = require('consola') // Pretty console logging
@@ -150,7 +150,7 @@ app.post('/register', upload.single('picture'), (request, response) => {
             return sendError(response, "Something happened while trying to resize image");
         });
 
-    // Encode single face 
+    // Encode single face
     var encoder = spawn('python3', ['encode.py', uploadsDirectory + imageFilename]);
     encoder.on("exit", () => {
         if (!fs.existsSync(uploadsDirectory + imageFilename + "_encoding.txt")) {
@@ -348,7 +348,28 @@ app.post('/logout', upload.single('picture'), (request, response) => {
         })
     }
 });
-
+app.get('/users/:name/cart', (request, response) => {
+	let result = {
+		products: [
+			{
+				name: "jam",
+				quantity: 3,
+				price: 5
+			},
+			{
+				name: "chips",
+				quanity: 4,
+				price: 1
+			},
+			{
+				name: "pencil",
+				quantity: 1,
+				price: 3
+			}
+		]
+	}
+	response.json(result);
+});
 app.get('/users', (request, response) => {
     User.findAll({
             attributes: ['name'],
@@ -435,7 +456,7 @@ app.post('/shelf/remove', function (request, response) {
                 productInStore.updateAttributes({
                     quantity: productInStore.quantity - 1
                 });
-            } 
+            }
             response.json(productInStore.quantity);
         } else {
             sendError(response, "The following product is not in the shelf: " + request.body.name);
