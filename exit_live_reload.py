@@ -4,7 +4,9 @@ import requests
 import numpy as np
 from io import StringIO
 from threading import Thread, Event
+import time
 
+just_entered = {}
 video_capture = cv2.VideoCapture(0)
 
 class UpdateThread(Thread):
@@ -93,9 +95,14 @@ while True:
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
-        if name is not "Unknown":
+        if name != "Unknown" and name not in just_entered:
             payload = {"name": name, "store-status": "not-in-store"}
-            _ = requests.post("http://c33ff9ba.ngrok.io/updatedoorcam", json=payload)
+            _ = requests.post("http://ef9f2360.ngrok.io/updatedoorcam", json=payload)
+            just_entered[name] = time.time() + 4
+
+    curr_time = time.time()
+    not_expired = ((key, val) for key, val in just_entered.items() if curr_time < val)
+    just_entered = dict(not_expired)
 
     # Display the resulting image
     cv2.imshow('Video', frame)
