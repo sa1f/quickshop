@@ -146,59 +146,67 @@ app.post('/register', upload.single('picture'), (request, response) => {
     // Resize the image
     sharp(request.file.buffer)
         .resize(320)
+        .rotate()
         .toFile(uploadsDirectory + imageFilename)
-        .then(() => consola.success("Saved picture successfully"))
-        .catch(err => {
-            return sendError(response, "Something happened while trying to resize image");
-        });
-
-    // Encode single face
-    var encoder = spawn('python3', ['encode.py', uploadsDirectory + imageFilename]);
-    encoder.on("exit", () => {
-        if (!fs.existsSync(uploadsDirectory + imageFilename + "_encoding.txt")) {
-            fs.unlink(uploadsDirectory + imageFilename, (err) => {
-                if (err)
-                    return sendError(response, err);
+        .then(() => {
+            consola.success("Saved picture successfully");
+            // Encode single face
+            var encoder = spawn('python3', ['encode.py', uploadsDirectory + imageFilename]);
+            encoder.stdout.on('data', (data) => {
+                consola.error(data.toString().trim());
             });
-
-            return sendError(response, "Could not find face_encoding.txt file. Please make sure " +
-                "encode.py and that a face exists in the image you uploaded.");
-        }
-
-        var encoding = fs.readFileSync(uploadsDirectory + imageFilename + "_encoding.txt", "utf8");
-
-        User.findOne({
-            where: {
-                name: request.body.name
-            }
-        }).then(user => {
-            if (user)
-                return sendError(response, "User with name " + request.body.name + " already exists", 422);
-            else {
-                User.create({
-                    name: request.body.name,
-                    passwordHash: generatePasswordHash(request.body.password),
-                    picture: request.file.buffer,
-                    faceEncoding: encoding
-                }).then(function (user) {
+            encoder.stderr.on('data', (data) => {
+                consola.error(data.toString().trim());
+            });
+            encoder.on("exit", () => {
+                if (!fs.existsSync(uploadsDirectory + imageFilename + "_encoding.txt")) {
                     fs.unlink(uploadsDirectory + imageFilename, (err) => {
                         if (err)
                             return sendError(response, err);
                     });
 
-                    fs.unlink(uploadsDirectory + imageFilename + "_encoding.txt", (err) => {
-                        if (err)
-                            return sendError(response, err);
-                    });
+                    return sendError(response, "Could not find face_encoding.txt file. Please make sure " +
+                        "encode.py and that a face exists in the image you uploaded.");
+                }
 
-                    response.send("Successfully Registered User");
-                }).catch(err => {
-                    sendError(response, err);
+                var encoding = fs.readFileSync(uploadsDirectory + imageFilename + "_encoding.txt", "utf8");
+
+                User.findOne({
+                    where: {
+                        name: request.body.name
+                    }
+                }).then(user => {
+                    if (user)
+                        return sendError(response, "User with name " + request.body.name + " already exists", 422);
+                    else {
+                        User.create({
+                            name: request.body.name,
+                            passwordHash: generatePasswordHash(request.body.password),
+                            picture: request.file.buffer,
+                            faceEncoding: encoding
+                        }).then(function (user) {
+                            fs.unlink(uploadsDirectory + imageFilename, (err) => {
+                                if (err)
+                                    return sendError(response, err);
+                            });
+
+                            fs.unlink(uploadsDirectory + imageFilename + "_encoding.txt", (err) => {
+                                if (err)
+                                    return sendError(response, err);
+                            });
+
+                            response.send("Successfully Registered User");
+                        }).catch(err => {
+                            sendError(response, err);
+                        });
+                    }
                 });
-            }
-        });
 
-    });
+            });
+        })
+        .catch(err => {
+            return sendError(response, "Something happened while trying to resize image");
+        });
 });
 
 app.post('/login', upload.single('picture'), (request, response) => {
@@ -219,6 +227,7 @@ app.post('/login', upload.single('picture'), (request, response) => {
         // Resize the image
         sharp(request.file.buffer)
             .resize(320)
+            .rotate()
             .toFile(uploadsDirectory + imageFilename)
             .then(() => consola.success("Saved picture successfully"))
             .catch(err => {
@@ -273,6 +282,7 @@ app.post('/logout', upload.single('picture'), (request, response) => {
         // Resize the image
         sharp(request.file.buffer)
             .resize(320)
+            .rotate()
             .toFile(uploadsDirectory + imageFilename)
             .then(() => consola.success("Saved picture successfully"))
             .catch(err => {
