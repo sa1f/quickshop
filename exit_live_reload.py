@@ -101,8 +101,7 @@ while True:
             just_entered[name] = time.time() + 4
 
     curr_time = time.time()
-    not_expired = ((key, val) for key, val in just_entered.items() if curr_time < val)
-    just_entered = dict(not_expired)
+    not_expired = {key: val for key, val in just_entered.items() if curr_time < val}
 
     # Display the resulting image
     cv2.imshow('Video', frame)
