@@ -263,7 +263,7 @@ app.post('/login', upload.single('picture'), (request, response) => {
                 return false;
             } else {
                 if (bcrypt.compareSync(request.body.password, user.dataValues.passwordHash))
-                    getOrGenerateSessionToken(name).then(token => {
+                    getOrGenerateSessionToken(request.body.name).then(token => {
                         response.json({'token': token});
                     })
                 else
