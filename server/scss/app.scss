@@ -1,1 +1,45 @@
-@import "../node_modules/spectre.css/src/spectre";
+
+$body-bg: rgb(243, 243, 243);
+$body-color: rgb(56, 56, 56);
+
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,800');
+$theme-colors: (
+  primary: $gray-600,
+  secondary: $gray-600,
+  success: $green,
+  info: $cyan,
+  warning: $yellow,
+  danger: $red,
+  light: $gray-100,
+  dark: $gray-800
+);
+
+body {
+    height: 100%;
+    overflow: none;
+}
+.mt-3.mr-3.card.user {
+    width: 12rem;
+}
+[hidden] {
+    display: none !important;
+  }
+  
+h1, p {
+    font-family: 'Open Sans';
+}
+
+.heading {
+    font-weight: 700;
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    background-color: #8064A2 !important;
+}
+
+#logo {
+    display: block;
+    width: 400px;
+    margin: 2em auto;
+}
