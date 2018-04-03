@@ -247,14 +247,14 @@ app.post('/login', upload.single('picture'), (request, response) => {
     } else {
         User.findOne({
             where: {
-                name: name
+                name: request.body.name
             }
         }).then(user => {
             if (!user) {
                 return false;
             } else {
-                if (bcrypt.compareSync(password, user.dataValues.password))
-                    response.json(getOrGenerateSessionToken(name));
+                if (bcrypt.compareSync(request.body.password, user.dataValues.passwordHash))
+                    response.json(getOrGenerateSessionToken(request.body.name));
                 else
                     response.status(404).send("Username/Password incorrect");
             }
