@@ -376,6 +376,21 @@ app.post('/delete_user', (request, response) => {
         }
     })
 });
+
+app.get('/needs_hashing', (request, response) => {
+    let result = 
+        {
+            block: 0,
+            data: "lots of data that needs hashing omg keep hashing this",
+            prev_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+    response.json(result);
+    
+});
+
+app.get('/register_hash', (request, response) => {
+    response.json(request.body);
+});
 //#endregion
 
 //#region User endpoints
