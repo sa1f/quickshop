@@ -30,6 +30,9 @@ db.sequelize.sync();
 const User = db.User;
 const Session = db.Session;
 const ProductInStore = db.ProductInStore;
+const Block = db.Block;
+const ProductInCart = db.ProductInCart;
+const Cart = db.Cart;
 
 
 // -- Temp storage for pics --
@@ -262,12 +265,17 @@ app.post('/login', upload.single('picture'), (request, response) => {
             if (!user) {
                 return false;
             } else {
+                /* DEBUG: disabling password for now
                 if (bcrypt.compareSync(request.body.password, user.dataValues.passwordHash))
                     getOrGenerateSessionToken(request.body.name).then(token => {
                         response.json({'token': token});
-                    })
+                    });
                 else
                     response.status(404).send("Username/Password incorrect");
+                */
+                getOrGenerateSessionToken(request.body.name).then(token => {
+                    response.json({'token': token});
+                });
             }
         });
     }
@@ -390,6 +398,7 @@ app.post('/delete_user', (request, response) => {
 });
 
 app.get('/needs_hashing', (request, response) => {
+
     let result = 
         {
             block: 0,

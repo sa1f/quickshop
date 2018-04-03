@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     Purchase.belongsTo(models.Session);
     Purchase.belongsTo(models.Cart);
     Purchase.hasMany(models.Return);
+    Purchase.hasOne(models.Block);
   };
   return Purchase;
 };
