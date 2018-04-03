@@ -263,7 +263,9 @@ app.post('/login', upload.single('picture'), (request, response) => {
                 return false;
             } else {
                 if (bcrypt.compareSync(request.body.password, user.dataValues.passwordHash))
-                    response.json(getOrGenerateSessionToken(request.body.name));
+                    getOrGenerateSessionToken(name).then(token => {
+                        response.json({'token': token});
+                    })
                 else
                     response.status(404).send("Username/Password incorrect");
             }
