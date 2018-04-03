@@ -1,5 +1,6 @@
 from flask import Flask, request
 import json
+import requests
 
 app = Flask(__name__)
 
@@ -27,11 +28,9 @@ def updatedoorcam():
         snapshot = user_status[name]["on-entry"]
         bought_items = [item for item in snapshot if store_status[item] == "not-in-stock"]
         if bought_items:
-            post_data = {name: bought_items}
-            # requests.post("saif.ms:3000/removeFromShelf", json=post_data)
+            post_data = {item: item for item in bought_items}
             print(name, "bought", post_data)
-
-    # dump_local_mem()
+            requests.post("http://saif.ms:3000/users/" + name + "/checkout")
 
     return '', 200
 
@@ -52,12 +51,30 @@ def updateshelf():
         store_status["cell phone"] = "not-in-stock"
 
     after_additions = [key for key, val in store_status.items() if val == "in-stock"]
-    if len(after_additions) > len(in_stock):
-        added_to_shelf = list(set(after_additions) - set(in_stock))
-        print(added_to_shelf, "added to shelf")
-        # requests.post("saif.ms:3000/putOnShelf", json=added_to_shelf)
 
-    # dump_local_mem()
+    # figure out who is in the store
+    if user_status:
+        users_in_store = [user for user, status in user_status.items() if status["status"] == "in-store"] 
+        last_user = users_in_store[-1]
+
+        if len(after_additions) > len(in_stock):
+            added_to_shelf = list(set(after_additions) - set(in_stock))
+            print(added_to_shelf, "added to shelf")
+
+            # added to shelf means user removed from cart
+            for item in added_to_shelf:
+                requests.post("http://saif.ms:3000/users/" + last_user + "/cart/remove", json={item: item})
+                print(last_user, "removed", item, "from cart")
+
+
+        elif len(after_additions) < len(in_stock):
+            removed_from_shelf = list(set(in_stock) - set(after_additions))
+            print(removed_from_shelf, "removed from shelf")
+
+            # removed from shelf means user added to cart
+            for item in removed_from_shelf:
+                requests.post("http://saif.ms:3000/users/" + last_user + "/cart/add", json={item: item})
+                print(last_user, "added", item, "to cart")                
 
     return '', 200
 
