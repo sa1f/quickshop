@@ -435,7 +435,7 @@ app.get('/users/:name/cart', (request, response) => {
             },
             {
                 name: "chips",
-                quanity: 4,
+                quantity: 4,
                 price: 1
             },
             {
