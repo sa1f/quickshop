@@ -187,6 +187,12 @@ html
       });
     }
 
+    function removeFromShelf(name) {
+      $.post("/shelf/remove", {name: name}, (data) => {
+        window.location.reload();
+      });
+    }
+
 
 
     

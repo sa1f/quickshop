@@ -1,3 +1,4 @@
+//#region Init
 // -- Import modules --
 const express = require('express'); // Web server
 const bodyParser = require('body-parser') // Form data parsing
@@ -42,7 +43,7 @@ const uploadsDirectory = './uploads/';
 if (!fs.existsSync(uploadsDirectory)) {
     fs.mkdirSync(uploadsDirectory);
 }
-
+//#endregion
 
 //#region -- Helper Functions --
 
@@ -119,6 +120,7 @@ function sendError(response, message, errorCode) {
 }
 //#endregion
 
+//#region Global endpoints
 app.get("/", (request, response) => {
     response.render('index');
 })
@@ -348,28 +350,35 @@ app.post('/logout', upload.single('picture'), (request, response) => {
         })
     }
 });
-app.get('/users/:name/cart', (request, response) => {
-	let result = {
-		products: [
-			{
-				name: "jam",
-				quantity: 3,
-				price: 5
-			},
-			{
-				name: "chips",
-				quanity: 4,
-				price: 1
-			},
-			{
-				name: "pencil",
-				quantity: 1,
-				price: 3
-			}
-		]
-	}
-	response.json(result);
+
+app.get('/face_encodings', (request, response) => {
+    User.findAll({
+        attributes: ['name', 'faceEncoding'],
+        where: {
+            faceEncoding: {
+                [Op.ne]: null
+            }
+        }
+    }).then(users => {
+        response.json(users);
+    });
 });
+
+app.post('/delete_user', (request, response) => {
+    consola.info("Deleting user " + request.body.name);
+    User.destroy({
+        where: {
+            name: request.body.name
+        }
+    }).then(affectedRows => {
+        if (affectedRows > 1) {
+            response.json(affectedRows + " rows were deleted")
+        }
+    })
+});
+//#endregion
+
+//#region User endpoints
 app.get('/users', (request, response) => {
     User.findAll({
             attributes: ['name'],
@@ -388,7 +397,7 @@ app.get('/users', (request, response) => {
                 response.status(404).json("There are no users to be found");
             }
         });
-})
+});
 
 app.get('/users/:name/picture', (request, response) => {
     User.findOne({
@@ -400,11 +409,68 @@ app.get('/users/:name/picture', (request, response) => {
         .then(user => {
             response.end(user.picture);
         });
-})
+});
 
-app.post('/shelf/update_in_front', (request, response) => {
+app.get('/users/:name/cart', (request, response) => {
+    let result = {
+        products: [{
+                name: "jam",
+                quantity: 3,
+                price: 5
+            },
+            {
+                name: "chips",
+                quanity: 4,
+                price: 1
+            },
+            {
+                name: "pencil",
+                quantity: 1,
+                price: 3
+            }
+        ]
+    }
+    response.json(result);
+});
+
+app.post('/users/:name/cart/add', function (request, response) {
+    if (!request.body.product_name) {
+        return sendError(response, "Please give a name for the product", 422)
+    }
+    if (!request.body.name) {
+        return sendError(response, "Please give a name for the product", 422)
+    }
 
 });
+
+app.post('/users/:name/cart/remove', function (request, response) {
+    if (!request.body.product_name) {
+        return sendError(response, "Please give a name for the product", 422)
+    }
+    if (!request.body.name) {
+        return sendError(response, "Please give a name for the product", 422)
+    }
+
+});
+
+app.post('/users/:name/checkout', function (request, response) {
+    if (!request.body.name) {
+        return sendError(response, "Please give a name for the product", 422)
+    }
+
+});
+
+app.get('/users/:name/purchases', function (request, response) {
+    if (!request.params.name) {
+        return sendError(response, "Please give a name for the user", 422)
+    }
+
+
+});
+
+//#endregion
+
+//#region Shelf endpoints
 app.get('/shelf', (request, response) => {
     ProductInStore.findAll({}).then(products => {
         response.json(products);
@@ -423,7 +489,9 @@ app.post('/shelf/add', function (request, response) {
         if (productInStore) {
             productInStore.updateAttributes({
                 quantity: productInStore.quantity + 1
-            })
+            }).then(updatedProduct => {
+                response.json("Successfully updated quantity of " + updatedProduct.name + " to " + updatedProduct.quanity);
+            });
         } else {
             ProductInStore.create({
                 name: request.body.name,
@@ -466,68 +534,10 @@ app.post('/shelf/remove', function (request, response) {
 
 });
 
-app.post('/users/:name/cart/add', function (request, response) {
-    if (!request.body.product_name) {
-        return sendError(response, "Please give a name for the product", 422)
-    }
-    if (!request.body.name) {
-        return sendError(response, "Please give a name for the product", 422)
-    }
+app.post('/shelf/update_in_front', (request, response) => {
 
 });
 
-app.post('/users/:name/cart/remove', function (request, response) {
-    if (!request.body.product_name) {
-        return sendError(response, "Please give a name for the product", 422)
-    }
-    if (!request.body.name) {
-        return sendError(response, "Please give a name for the product", 422)
-    }
-
-});
-
-app.post('/users/:name/checkout', function (request, response) {
-    if (!request.body.name) {
-        return sendError(response, "Please give a name for the product", 422)
-    }
-
-});
-
-app.get('/users/:name/purchases', function (request, response) {
-    if (!request.params.name) {
-        return sendError(response, "Please give a name for the user", 422)
-    }
-
-
-});
-
-
-
-app.get('/face_encodings', (request, response) => {
-    User.findAll({
-        attributes: ['name', 'faceEncoding'],
-        where: {
-            faceEncoding: {
-                [Op.ne]: null
-            }
-        }
-    }).then(users => {
-        response.json(users);
-    });
-});
-
-app.post('/delete_user', (request, response) => {
-    consola.info("Deleting user " + request.body.name);
-    User.destroy({
-        where: {
-            name: request.body.name
-        }
-    }).then(affectedRows => {
-        if (affectedRows > 1) {
-            response.json(affectedRows + " rows were deleted")
-        }
-    })
-});
-
+//#endregion
 
 module.exports = app;
