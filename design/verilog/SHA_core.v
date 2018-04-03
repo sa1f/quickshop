@@ -95,13 +95,16 @@ always @(posedge clk_in or negedge rst_in) begin
                 
                 // write hash values to CPU
                 else if (a_in[31:29] == 3'b011) begin
+                    status <= 32'b0;
                     state <= WRITE;
                 end
 
                 // wipe hash and restart
                 else if (a_in[31:29] == 3'b111) begin
+                    status <= 32'b0;
                     state <= WAIT;
                 end
+                
                 rxCount <= 0;
             end
 

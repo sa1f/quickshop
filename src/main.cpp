@@ -46,38 +46,51 @@ int main(void)
 	while (1) {
 		// poll for incoming data to hash
 		uint32_t nonce = 0;
-		int i;
-		sha256.getMessage();
-		std::vector<uint8_t> message = sha256.padMessage(nonce);
-				printf("\nHash: \n\t");
-				for (i = 0; i < message.size(); i++)
-				{
-					printf("%X", message[i]);
-				}
+		uint32_t length512;
+		uint32_t i = 0;
+
+		// poll serial for new data to hash and pre-process appropriately
+		std::vector<uint8_t> message = sha256.getMessage();
+		printf("Raw message size is %d\n", message.size()*8);
+		message = sha256.padMessage(nonce);
+
 		// cast to 32 bit list
 		std::vector<uint32_t> message32 = convertVec8to32(message);
 
-		// run SHA256
-		std::vector<uint32_t> hash32 = sha256.getHash(message32);
+		// divide by (512/32 = 16) to get required number of additional hashes
+		length512 = message32.size() >> 4;
+		printf("message size is: %d length512 is: %d\n", message32.size()*32, length512);
 
+		// reset hash core
+		sha256.resetHash();
+		std::vector<uint32_t> hash32;
+		for (i = 0; i < length512; i++)
+		{
+			hash32 = sha256.getHash(message32, i*16);
+		}
 
 		while (hash32[0] >> 24 != 0)
 		{
 			nonce++;
 			message = sha256.padMessage(nonce);
 			message32 = convertVec8to32(message);
-			hash32 = sha256.getHash(message32);
-//			printf("\nHash: \n\t");
-//			for (i = 0; i < hash32.size(); i++)
-//			{
-//				printf("%08X", hash32[i]);
-//			}
+
+			// reset hash core
+			sha256.resetHash();
+			for (i = 0; i < length512; i++)
+			{
+				hash32 = sha256.getHash(message32, i*16);
+			}
+			printf("hash: %X %X %X %X %X %X %X %X\n", hash32[0], hash32[1], hash32[2], hash32[3],
+					hash32[4], hash32[5], hash32[6], hash32[7]);
 		}
+
 		// cast to 8 bit list
 		std::vector<uint8_t> hash = convertVec32to8(hash32);
 
 		// send back to server
 		sha256.sendMessage(hash);
+		printf("Sent message back to server\n");
 	}
 }
 

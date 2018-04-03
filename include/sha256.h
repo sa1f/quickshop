@@ -29,7 +29,8 @@ public:
     std::vector<uint8_t> padMessage(uint32_t nonce);
     uint64_t getMessageLength();
     void sendMessage(std::vector<uint8_t> message);
-    std::vector<uint32_t> getHash(std::vector<uint32_t> message);
+    std::vector<uint32_t> getHash(std::vector<uint32_t> message, uint32_t start);
+    void resetHash();
     uint8_t getChar();
     uint8_t putChar(uint8_t c);
 };
