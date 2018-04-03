@@ -22,7 +22,7 @@ updateStopFlag = Event()
 thread = UpdateThread(updateStopFlag)
 thread.start()
 
-r = requests.get('http://saif.ms:3000/encodings')
+r = requests.get('http://saif.ms:3000/face_encodings')
 
 # Create arrays of known face encodings and their names
 #known_face_encodings = [entry['faceEncoding'] for entry in r.json()]
@@ -35,7 +35,7 @@ def update():
     global string_IOs_from_encodings
     global known_face_encodings
     global known_face_names
-    r = requests.get('http://saif.ms:3000/encodings')
+    r = requests.get('http://saif.ms:3000/face_encodings')
     string_IOs_from_encodings = [StringIO(entry['faceEncoding']) for entry in r.json()]
     known_face_encodings = [np.loadtxt(encoding_string_io) for encoding_string_io in  string_IOs_from_encodings]
     known_face_names = [entry['name'] for entry in r.json()]
@@ -97,7 +97,7 @@ while True:
 
         if name != "Unknown" and name not in just_entered:
             payload = {"name": name, "store-status": "not-in-store"}
-            _ = requests.post("http://ef9f2360.ngrok.io/updatedoorcam", json=payload)
+            _ = requests.post("http://6176834c.ngrok.io/updatedoorcam", json=payload)
             just_entered[name] = time.time() + 4
 
     curr_time = time.time()
