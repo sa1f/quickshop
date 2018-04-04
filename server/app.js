@@ -78,10 +78,16 @@ function getOrGenerateSessionToken(name) {
             }).then(session => {
                 if (!session) {
                     Session.create({
-                        token: randString(),
-                        valid: true,
-                        UserId: user.id
-                    }).then(session => {
+                            token: randString(),
+                            valid: true,
+                            UserId: user.id,
+                            Cart: {}
+                        }, {
+                            include: [Cart]
+                        }
+
+
+                    ).then(session => {
                         resolve(session.token);
                     }).catch(err => {
                         consola.error("An error occurred while trying to create a new session token");
@@ -97,9 +103,39 @@ function getOrGenerateSessionToken(name) {
         });
     });
 }
+app.get('/test/:name/:product', (request, response) => {
+    ProductInStore.findOne({
+        where: {
+            name: request.params.product
+        }
+    }).then(product => {
+        response.json(product);
+    });
+    Cart.findOne({
+        where: {},
+        include: [{
+            model: Session,
+            attributes: [],
+            include: [{
+                model: User,
+                attributes: [],
+                where: {
+                    name: request.params.name
+                }
+            }],
+            where: {
+                valid: true
+            }
+        }]
+    }).then(user => {
+        //response.json(user);
+    })
 
-function authenticate(token) {
-    if (!token)
+
+});
+
+function authenticate(name) {
+    if (!name)
         return Promise.resolve(false);
     return Session.findOne({
         where: {
@@ -274,7 +310,9 @@ app.post('/login', upload.single('picture'), (request, response) => {
                     response.status(404).send("Username/Password incorrect");
                 */
                 getOrGenerateSessionToken(request.body.name).then(token => {
-                    response.json({'token': token});
+                    response.json({
+                        'token': token
+                    });
                 });
             }
         });
@@ -399,19 +437,92 @@ app.post('/delete_user', (request, response) => {
 
 app.get('/needs_hashing', (request, response) => {
 
-    let result = 
-        {
-            block: 0,
-            data: "lots of data that needs hashing omg keep hashing this",
-            prev_hash: "0000000000000000000000000000000000000000000000000000000000000000"
-        }
+    let result = {
+        block: 0,
+        data: "lots of data that needs hashing omg keep hashing this",
+        prev_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+    }
     response.json(result);
-    
+
 });
 
 app.post('/register_hash', (request, response) => {
     response.json(request.body);
 });
+
+app.get('/blocks', (request, response) => {
+    let result = [{
+            block_num: 0,
+            nonce: 23753,
+            data: {
+                name: "Saif",
+                date: new Date(),
+                products: [{
+                        name: "jam",
+                        quantity: 3,
+                        price: 5
+                    },
+                    {
+                        name: "chips",
+                        quantity: 4,
+                        price: 1
+                    },
+                    {
+                        name: "pencil",
+                        quantity: 1,
+                        price: 3
+                    }
+                ]
+            },
+            prev_hash: '6B86B273FF34FCE19D6B804EFF5A3F5747ADA4EAA22F1D49C01E52DDB7875B4B',
+            curr_hash: 'D4735E3A265E16EEE03F59718B9B5D03019C07D8B6C51F90DA3A666EEC13AB35'
+        },
+        {
+            block_num: 1,
+            nonce: 432342,
+            data: {
+                name: "John",
+                date: new Date(),
+                products: [{
+                        name: "jam",
+                        quantity: 2,
+                        price: 5
+                    },
+                   
+                    {
+                        name: "pencil",
+                        quantity: 3,
+                        price: 3
+                    }
+                ]
+            },
+            prev_hash: '6B86B273FF34FCE19D6B804FFF5A3F5747ADA4EAA22F1D49C01E52DDB7875B4B',
+            curr_hash: 'D4735E3A265E16EEE03F5971EE9B5D03019C07D8B6C51F90DA3A666EEC13AB35'
+        },
+        {
+            block_num: 2,
+            nonce: 325346,
+            data: {
+                name: "Jim",
+                date: new Date(),
+                products: [{
+                        name: "Ball",
+                        quantity: 3,
+                        price: 5
+                    },
+                    {
+                        name: "chips",
+                        quantity: 4,
+                        price: 1
+                    }
+                ]
+            },
+            prev_hash: '6B86B273FF34FCE19D6B804EFF5A3F5747ADA4EAA22F1D49C01E52DDB7875B4B',
+            curr_hash: 'D4735E3A265E16EEE03F59718B9B5D03019C07D8B6C51F90DA3A666EEC13AB35'
+        }
+    ];
+    response.json(result);
+})
 //#endregion
 
 //#region User endpoints
@@ -473,10 +584,10 @@ app.post('/users/:name/cart/add', function (request, response) {
     if (!request.body.product_name) {
         return sendError(response, "Please give a name for the product", 422)
     }
-    if (!request.body.name) {
-        return sendError(response, "Please give a name for the product", 422)
+    if (!request.params.name) {
+        return sendError(response, "Please give a name for the user", 422)
     }
-
+    aur
 });
 
 app.post('/users/:name/cart/remove', function (request, response) {
