@@ -81,26 +81,22 @@ int main(void)
 			{
 				hash32 = sha256.getHash(message32, i*16);
 			}
-			printf("hash: %X %X %X %X %X %X %X %X\n", hash32[0], hash32[1], 
-				hash32[2], hash32[3], hash32[4], hash32[5], hash32[6], hash32[7]);
 		}
 
 		// cast to 8 bit list
 		std::vector<uint8_t> hash = convertVec32to8(hash32);
-		uint8_t nonceArray[] = {
-			((nonce >> 24) & 0xFF),
-			((nonce >> 16) & 0xFF),
-			((nonce >> 8) & 0xFF),
-			(nonce& 0xFF)
-		};
-		std::vector<uint8_t> nonceString = (nonceArray, 
-			nonceArray + sizeof(nonceArray) / sizeof(nonceArray[0]));
+		std::vector<uint8_t> nonceString;
+		nonceString.push_back((nonce >> 24) & 0xFF);
+		nonceString.push_back((nonce >> 16) & 0xFF);
+		nonceString.push_back((nonce >> 8) & 0xFF);
+		nonceString.push_back(nonce & 0xFF);
 
 		// send back to server
 		sha256.sendMessage(hash);
 		sha256.sendMessage(nonceString);
 
-		printf("Sent message back to server\n");
+		printf("Nonce = %02X%02X%02X%02X\n", nonceString[0], nonceString[1], nonceString[2], nonceString[3]);
+		printf("Sent message back to server with nonce %d\n", nonce);
 	}
 }
 
