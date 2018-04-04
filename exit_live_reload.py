@@ -5,6 +5,11 @@ import numpy as np
 from io import StringIO
 from threading import Thread, Event
 import time
+import pyttsx3
+
+engine = pyttsx3.init()
+engine.setProperty('rate', 120)
+engine.setProperty('volume', 1.0)
 
 just_entered = {}
 video_capture = cv2.VideoCapture(0)
@@ -99,6 +104,8 @@ while True:
             payload = {"name": name, "store-status": "not-in-store"}
             _ = requests.post("http://6176834c.ngrok.io/updatedoorcam", json=payload)
             just_entered[name] = time.time() + 4
+            engine.say(name + " has left the store")
+            engine.runAndWait()
 
     curr_time = time.time()
     not_expired = {key: val for key, val in just_entered.items() if curr_time < val}
