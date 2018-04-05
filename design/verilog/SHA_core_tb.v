@@ -1,3 +1,7 @@
+/*
+* Testbench for model sim
+*/
+
 module SHA_core_tb();
 
 reg clk;
@@ -37,6 +41,7 @@ initial begin
 	addr = 32'h20000000; #20;
 	addr = 32'h40000000; #20;
 
+	// input data
 	addr = 32'h0; #20;
 	din  = 32'h61626380; #20;
 

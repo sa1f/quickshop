@@ -35,6 +35,7 @@ uint8_t SHA256::getChar() {
     return *mSHA256_RxData;
 }
 
+// sends message over serial back to Python module
 void SHA256::sendMessage(std::vector<uint8_t> message)
 {
 	uint32_t i;
@@ -50,17 +51,12 @@ void SHA256::sendMessage(std::vector<uint8_t> message)
 
 std::vector<uint8_t> SHA256::padMessage(uint32_t nonce)
 {
+	// XOR nonce with first 32 bits
 	std::vector<uint8_t> message(mRxData.begin(), mRxData.end());
 	message[0] = message[0] ^ ((nonce >> 24) & 0xFF);
 	message[1] = message[1] ^ ((nonce >> 16) & 0xFF);
 	message[2] = message[2] ^ ((nonce >> 8) & 0xFF);
 	message[3] = message[3] ^ (nonce& 0xFF);
-
-	// add nonce
-	//	message.push_back((nonce >> 24) & 0xFF);
-	//	message.push_back((nonce >> 16) & 0xFF);
-	//	message.push_back((nonce >> 8) & 0xFF);
-	//	message.push_back(nonce & 0xFF);
 
 	// pad message with ending bit and 0s
 	message.push_back((0x80 & 0xFF));
