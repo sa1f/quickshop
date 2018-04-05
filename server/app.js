@@ -881,7 +881,7 @@ app.post('/shelf/add', function (request, response) {
                 name: product_name,
                 quantity: 1,
             }).then(function (user) {
-                consola.success(response, "Successfully Added Product");
+                sendSuccess(response, "Successfully Added Product");
                 response.redirect('/');
             }).catch(err => {
                 sendError(response, err);
