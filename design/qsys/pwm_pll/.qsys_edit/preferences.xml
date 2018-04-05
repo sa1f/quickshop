@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences>
+ <debug showDebugMenu="0" />
+ <systemtable filter="All Interfaces">
+  <columns>
+   <connections preferredWidth="63" />
+   <irq preferredWidth="34" />
+  </columns>
+ </systemtable>
+ <library
+   expandedCategories="Library,Project,Library/Basic Functions/Clocks; PLLs and Resets/PLL,Library/Basic Functions,Library/Basic Functions/Clocks; PLLs and Resets" />
+ <window width="1100" height="800" x="789" y="129" />
+ <generation
+   synthesis="VERILOG"
+   block_symbol_file="1"
+   path="E:/3rdYear/cpen391/project391/design/qsys/pwm_pll/" />
+</preferences>
