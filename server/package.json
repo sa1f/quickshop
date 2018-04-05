@@ -12,6 +12,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "apicache": "^1.2.1",
     "bcrypt": "^1.0.3",
     "bootstrap": "^4.0.0",
     "express": "^4.16.2",
@@ -29,6 +30,7 @@
     "sharp": "^0.20.0",
     "spectre.css": "^0.5.1",
     "sqlite3": "^3.1.13",
+    "superagent": "^3.8.2",
     "supertest": "^3.0.0"
   },
   "noderize": {

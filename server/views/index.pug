@@ -93,20 +93,37 @@ html
                 label.sr-only(for='delete-user-form-name') Name
                 input#delete-user-form-name.form-control(data-lpignore="true" type='text', name='name', placeholder='Name')
               input.btn.btn-danger(type='submit', value='Delete User')
+        
+        // Shelf 
         .col-9
           .row
             h3.heading.col Shelf
+ 
             form.form-inline(autocomplete="off", action='/shelf/add', method='POST')
+              .input-group.mr-2
+                .input-group-text
+                  input#pauseShelf(type='checkbox', aria-label='Checkbox for following text input')
+                .input-group-append
+                  span.input-group-text Pause Live Updating
+
               .input-group.mr-sm-2
                 input.form-control.col(data-lpignore="true", name="name", type='text')
               .input-group.mr-sm-2
                 input.btn.btn-secondary(type='submit', value='Add Product')
           hr
-          #shelf.row.mb-3
+          #shelf.row.mb-3        
           h3.heading Blockchain
           hr
-          h3.heading Current Users
+          .row
+            h3.heading.col Current Users
+            form.form-inline
+              .input-group.mr-2
+                .input-group-text
+                  input#pauseUsers(type='checkbox', aria-label='Checkbox for following text input')
+                .input-group-append
+                  span.input-group-text Pause Live Updating
           hr
+
           #users.row
 
   script.
@@ -125,6 +142,8 @@ html
         }
     });
 
+    let cacheUsers = "";
+    let cacheCart = "";
     let updateUsers = () => {
       $.get("/users", function(data) {
         $("#users").html("");
@@ -138,19 +157,49 @@ html
           cardContainer.append(profilePic);
           cardContainer.append(cardBody);
           cardBody.append(name);
+  
+
           if (user.Sessions.length > 0) {
+            $.get(`/users/${user.name}/cart`, (cartItems) => {
+                if (cartItems.length > 0) {
+                let cartTable = $(`
+                  <table class="table">
+                    <thead>
+                      <th>Item</th>
+                      <th>#</th>
+                      <th>$</th>
+                    </thead>
+                  </table>
+                `);
+                for (item of cartItems) {
+                  let cartEntry = $(`
+                    <tr>
+                      <td>${item.name}</td>
+                      <td>${item.quantity}</td>
+                      <td>${item.price}</td>
+                    </tr>
+                  `);
+                  cartTable.append(cartEntry);
+                }
+                cardBody.append(cartTable);
+              }
+            });
+            
             let loggedIn = $("<h4><span class='badge badge-primary'>In Store</span></h4>")
-            let logout = $("<a class='btn btn-danger' href='#' onclick=\"logout('" + user.name +"')\"><span class='fas fa-sign-out-alt mr-1'></span>Exit Store</a>");
+            let logout = $("<button class='btn btn-danger' href='#' onclick=\"logout('" + user.name +"')\"><span class='fas fa-sign-out-alt mr-1'></span>Exit Store</button>");
+            let checkout = $("<button class='btn btn-success mb-1' href='#' onclick=\"checkout('" + user.name +"')\"><span class='fas fa-shopping-cart mr-1'></span>Checkout</button>");
             cardBody.append(loggedIn);
+            cardBody.append(checkout);
             cardBody.append(logout);
           } else {
             let loggedOut = $("<h4><span class='badge badge-warning'>Not in Store</span></h4>")
-            let login = $("<a class='btn btn-primary' href='#' onclick=\"login('" + user.name +"')\"><span class='fas fa-sign-out-alt mr-1'></span>Enter Store</a>");
+            let login = $("<button class='btn btn-primary' href='#' onclick=\"login('" + user.name +"')\"><span class='fas fa-sign-out-alt mr-1'></span>Enter Store</button>");
             cardBody.append(loggedOut);
             cardBody.append(login);
 
           }
 
+          
           $("#users").append(cardContainer);
 
         }
@@ -158,26 +207,56 @@ html
     };
 
     let updateShelf = () => {
-      $.get('/shelf', (data) => {
-        $("#shelf").html("");
-        for (let product of data) {
-          let cardContainer = $("<div class='mt-3 mr-3 card user'></div>");
-          let cardBody = $("<div class='card-body'></div>");
+      var users;
+      $.get("/users", function(users) {
+        $.get('/shelf', (products) => {
+          $("#shelf").html("");
+          for (let product of products) {
+            let cardContainer = $("<div class='mt-3 mr-3 card shelf-item'></div>");
+            let cardBody = $("<div class='card-body'></div>");
 
-          let name = $("<h5 class='card-title'>" + product.name + "</h5>");
-          let quantity = $("<p>Quantity: " + product.quantity + "</p>");
-          cardContainer.append(cardBody);
-          cardBody.append(name);
-          cardBody.append(quantity);
-          if (product.quantity > 0) {
-            let remove = $("<a class='btn btn-danger' href='#' onclick=\"removeFromShelf('" + product.name +"')\"><span class='fas fa-times mr-1'></span>Remove</a>");
-            cardBody.append(remove);
+            let name = $("<h5 class='card-title'>" + product.name + "</h5>");
+            let quantity = $("<p>Quantity: " + product.quantity + "</p>");
+            
+            cardContainer.append(cardBody);
+            cardBody.append(name);
+            cardBody.append(quantity);
+
+            let cartForm = $("<div></div>");
+            let userSelect = $("<select class='custom-select user-cart-select'></select");
+
+            for (user of users) {
+              userSelect.append($(`<option>${user.name}</option>`));
+            }
+
+            let hiddenProductName = $(`<input type="hidden" name="product_name" value="${product.name}"></input>`);
+
+            let cartFormSubmit = $(`
+              <div role="group" class="btn-group mt-2">
+                <button type="button" class="btn btn-primary" onclick="addToCart('${product.name}', this)"><i class="fas fa-cart-plus"></i></button>
+                <button type="button" class="btn btn-danger" onclick="removeFromCart('${product.name}', this)"><i class="fas fa-cart-arrow-down"></i></button>
+              </div>
+            `);
+
+
+            cardBody.append(cartForm);
+            cartForm.append(userSelect);
+            cartForm.append(hiddenProductName);
+            cartForm.append(cartFormSubmit);
+              
+            let addRemove = $(`
+              <hr/>
+              <div role="group" class="btn-group mt-2">
+                <button type="button" onclick="addToShelf('${product.name}')" class="btn btn-primary"><span class="fas fa-plus"></span></button>
+                <button type="button" onclick="removeFromShelf('${product.name}')" class="btn btn-danger"><span class="fas fa-minus"></span></button>
+              </div>
+            `);
+
+            cardBody.append(addRemove);
+            $("#shelf").append(cardContainer);
           }
-
-          $("#shelf").append(cardContainer);
-
-        }
-      })
+        });
+      });
     };
 
     function logout(name) {
@@ -189,22 +268,55 @@ html
     function login(name) {
       var password = prompt("What's the password?");
       $.post("/login", {name: name, password: password}, (data) => {
-        window.location.reload();
       });
+    }
+    function checkout(name) {
+      $.get(`/users/${name}/checkout`);
     }
 
     function removeFromShelf(name) {
-      $.post("/shelf/remove", {name: name}, (data) => {
-        window.location.reload();
-      });
+      $.post("/shelf/remove", {name: name});
+      $("#pauseUsers").prop('checked', true);
     }
 
+    function addToShelf(name) {
+      $.post("/shelf/add", {name: name});
+      $("#pauseUsers").prop('checked', true);
+    }
+
+    function addToCart(name, e) {
+      let user = $(e).parent().parent().find('select').val();
+      $.post(`/users/${user}/cart/add`, {product_name: name});
+      $("#pauseUsers").prop('checked', true);
+    }
+
+    function removeFromCart(name, e) {
+      let user = $(e).parent().parent().find('select').val();
+      $.post(`/users/${user}/cart/remove`, {product_name: name});
+      $("#pauseUsers").prop('checked', true);
+    }
+
+    $("#shelf").on('click', () => {
+      $("#pauseShelf").prop('checked', true);
+    });
+
+    $("#users").on('click', () => {
+      $("#pauseUsers").prop('checked', true);
+    });
+
+    $
+    //TODO
     updateShelf();
     updateUsers();
     setInterval(() => { 
-      updateShelf();
-      updateUsers();
-    }, 3000);
+      if (!$("#pauseShelf").is(":checked")) {
+        updateShelf();
+      }
+      
+      if (!$("#pauseUsers").is(":checked")) {
+        updateUsers();
+      }
+    }, 2000);
 
 
 

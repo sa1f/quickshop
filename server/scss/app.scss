@@ -19,8 +19,12 @@ body {
     height: 100%;
     overflow: none;
 }
-.mt-3.mr-3.card.user {
+.user, .shelf-item {
     width: 12rem;
+}
+
+.user {
+    width: 15rem;
 }
 [hidden] {
     display: none !important;
