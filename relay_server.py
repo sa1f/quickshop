@@ -19,7 +19,7 @@ def updatedoorcam():
     if status == "in-store":
         # take a snapshot of what was in the store when user entered
         user_status[name] = {"status": status, "on-entry": [key for key, val in store_status.items() if val == "in-stock"]}
-        requests.post("http://saif.ms:3000/login", json={"name": name, "password": "1"})
+        requests.post("http://store.saif.ms:3000/login", json={"name": name, "password": "1"})
         print(name, "entered store")
 
     # user exited
@@ -31,9 +31,9 @@ def updatedoorcam():
         if bought_items:
             post_data = {item: item for item in bought_items}
             print(name, "bought", post_data)
-            requests.post("http://saif.ms:3000/users/" + name + "/checkout")
+            requests.post("http://store.saif.ms:3000/users/" + name + "/checkout")
 
-        requests.post("http://saif.ms:3000/logout", json={"name": name, "password": "1"})
+        requests.post("http://store.saif.ms:3000/logout", json={"name": name, "password": "1"})
         print(name, "exited store")
 
     return '', 200
@@ -67,7 +67,7 @@ def updateshelf():
 
             # added to shelf means user removed from cart
             for item in added_to_shelf:
-                requests.post("http://saif.ms:3000/users/" + last_user + "/cart/remove", json={"product_name": item})
+                requests.post("http://store.saif.ms:3000/users/" + last_user + "/cart/remove", json={"product_name": item})
                 print(last_user, "removed", item, "from cart")
 
 
@@ -77,7 +77,7 @@ def updateshelf():
 
             # removed from shelf means user added to cart
             for item in removed_from_shelf:
-                requests.post("http://saif.ms:3000/users/" + last_user + "/cart/add", json={"product_name": item})
+                requests.post("http://store.saif.ms:3000/users/" + last_user + "/cart/add", json={"product_name": item})
                 print(last_user, "added", item, "to cart")                
 
     return '', 200
