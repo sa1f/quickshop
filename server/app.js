@@ -782,7 +782,7 @@ app.get('/users/:name/checkout', function (request, response) {
                     let data = {
                         name: user.name,
                         date: new Date(),
-                        products: JSON.parse(res.text)
+                        products: JSON.parse(res.text).products
                     }
 
                     Purchase.create({
