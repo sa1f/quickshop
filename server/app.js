@@ -489,9 +489,18 @@ app.post('/register_hash', (request, response) => {
             block_num: block_num
         }
     }).then(block => {
+        if (!block) {
+            return sendError(response, `Block not found: ${block_num}`)
+        }
         block.update({
-            curr_hash: curr_hash
+            curr_hash: curr_hash,
+            nonce: nonce
         }).then(updatedBlock => {
+            if (!updatedBlock) {
+                return sendError(response, `Block not updated: ${block_num}`)
+            } else if (!updatedBlock.nonce) {
+                return sendError(response, `Block nonce not updated: ${block_num}`)
+            }
             sendSuccess(response, "Successfully registered hash");
         })
     });
