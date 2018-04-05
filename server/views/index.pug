@@ -161,7 +161,7 @@ html
 
           if (user.Sessions.length > 0) {
             $.get(`/users/${user.name}/cart`, (cartItems) => {
-                if (cartItems.length > 0) {
+                if (cartItems.products.length > 0) {
                 let cartTable = $(`
                   <table class="table">
                     <thead>
@@ -171,7 +171,7 @@ html
                     </thead>
                   </table>
                 `);
-                for (item of cartItems) {
+                for (item of cartItems.products) {
                   let cartEntry = $(`
                     <tr>
                       <td>${item.name}</td>
