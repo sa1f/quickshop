@@ -465,6 +465,9 @@ app.get('/needs_hashing', (request, response) => {
             ['createdAt', 'DESC']
         ]
     }).then(blocks => {
+        if (!blocks || blocks.length == 0) {
+            return response.send('');
+        }
         response.json(blocks[0]);
     });
 });
