@@ -606,7 +606,7 @@ app.get('/users/:name/cart', cache('5 seconds'), (request, response) => {
 
             products[product.name]['quantity'] = count;
         }
-        response.json(Object.values(products));
+        response.json({'products': Object.values(products)});
 
     });
 });
