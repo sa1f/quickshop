@@ -2,7 +2,7 @@
 	<img width='300' src="server/public/images/logo.png">
 </p>
 
-## Hello!
+# Welcome to Quickshop!
 
 This is a project done for CPEN 391. Group members include:
 
