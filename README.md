@@ -46,7 +46,19 @@ This folder contains three python scripts that control the exit and entry camera
 
 ## de1
 
-This folder contains the fpga code to hash and mine blocks on the blockchain
+This folder contains the Verilog and De1 source code to build the SHA256 hashing system which mines blocks on the blockchain.
+It also contains NIOS II firmware source code and an additional python module to transfer information between the DE1 and the main server
+
+**Getting Started**
+	* prj contains the Quartus 15 project files and the project can be opened via the module1.qpf file (legacy name from module 1)
+		- it can then be built normally as per usual
+	* include and src contain the C++ source code used to generate the DE1 firmware and can be loaded into an eclipse project
+	  and is built as specified in the module 1 tutorials.
+	* design contains all of the DE1 source code including VHDL, verilog, timing/pin constraints and generated qsys files.
+		- note, the nios_system.sopcinfo is also located here.
+	* python contains the host.py script which connects the DE1 to the server by providing a serial translation layer. Script can be
+	  run by invoking "python3 host.py" whilst there is a valid serial connection to the DE1. May need to run "pip3 install serial" and
+	  "pip3 install requests" as dependencies.
 
 ## iOS
 
