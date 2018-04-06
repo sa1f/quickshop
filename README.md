@@ -50,8 +50,6 @@ This folder contains the central NodeJs/Express server that controls the store.
 
 If you'd like to see the database contents, open the .sqlite file using [sqlite browser](http://sqlitebrowser.org/)
 
-\ ゜o゜)ノ
-
 
 #### Server structure
 
@@ -68,3 +66,5 @@ If you'd like to see the database contents, open the .sqlite file using [sqlite 
 * facerec\_from\_webcam\_faster\_.py - [modified example](https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py) file from the face\_recognition\_ module. Allows for live registration of new faces on the server and live face recognition. Served as the basis for the entrance and exit cameras
 * gulpfile.js - Used to compile sass files
 * login\_face\_.py - used to recognize a face from a picture
+
+\ ゜o゜)ノ
