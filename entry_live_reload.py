@@ -14,6 +14,7 @@ engine.setProperty('volume', 1.0)
 just_entered = {}
 video_capture = cv2.VideoCapture(0)
 
+# every 2 seconds, ask the server for a list of face encodings
 class UpdateThread(Thread):
 	def __init__(self, event):
 		Thread.__init__(self)
@@ -27,7 +28,7 @@ updateStopFlag = Event()
 thread = UpdateThread(updateStopFlag)
 thread.start()
 
-r = requests.get('http://store.saif.ms:3000/face_encodings')
+r = requests.get('http://store.saif.ms/face_encodings')
 
 # Create arrays of known face encodings and their names
 #known_face_encodings = [entry['faceEncoding'] for entry in r.json()]
@@ -40,7 +41,7 @@ def update():
     global string_IOs_from_encodings
     global known_face_encodings
     global known_face_names
-    r = requests.get('http://store.saif.ms:3000/face_encodings')
+    r = requests.get('http://store.saif.ms/face_encodings')
     string_IOs_from_encodings = [StringIO(entry['faceEncoding']) for entry in r.json()]
     known_face_encodings = [np.loadtxt(encoding_string_io) for encoding_string_io in  string_IOs_from_encodings]
     known_face_names = [entry['name'] for entry in r.json()]
@@ -102,7 +103,7 @@ while True:
 
         if name != "Unknown" and name not in just_entered:
             payload = {"name": name, "store-status": "in-store"}
-            _ = requests.post("http://3e90db83.ngrok.io/updatedoorcam", json=payload)
+            _ = requests.post("http://52d9abea.ngrok.io/updatedoorcam", json=payload)
             just_entered[name] = time.time() + 4
             engine.say(name + " has entered the store")
             engine.runAndWait()
