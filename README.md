@@ -15,8 +15,8 @@ This is a project done for CPEN 391. Group members include:
 
 Quickshop is a fully automated store with a central server, facial and object recognition services and a blockchain to store transactions.
 
-You can view a video of the main store dashboard [here 📹](https://youtu.be/8BsaA3HJeXo)
-You can view a demo of the store [here 📹](https://youtu.be/WYAmqCGjMSQ)
+* You can view a video of the main store dashboard [here 📹](https://youtu.be/8BsaA3HJeXo)
+* You can view a demo of the store [here 📹](https://youtu.be/WYAmqCGjMSQ)
 
 
 Here's an overview of the structure of the project:
