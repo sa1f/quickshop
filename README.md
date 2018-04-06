@@ -6,7 +6,7 @@
 
 This is a project done for CPEN 391. Group members include:
 
-- Mike Yue (Blockchain front end)
+- Mike Yue (Blockchain front end + Web Dev)
 - Justin Awrey (Object detection + facial recognition)
 - Benjamin Lang (FPGA Hardware Accelerated Blockchain mining)
 - Qian Rui Chow (User iOS Mobile app)
@@ -25,8 +25,11 @@ Here's an overview of the structure of the project:
 
 This folder contains the server which serves the frontend view of the block chain. Quick summary:
 
-* Reads data from /blocks endpoint, and renders a webpage in the Express Framework using the Pug View.
-* The html code is dynamically rendered in the Views folder, in the file called pugprac
+* Reads data from /blocks endpoint, and renders a webpage in the Express Framework using the Pug View Engine. 
+* The server code itself for GET requests, data parsing, and (legacy) DB connections are in block_chain_server.js
+* The html code is dynamically rendered in the Views folder, in the file called blockchain.pug
+* Contact.pug and Welcome.pug are the contact information and welcome html files rendered when users click the other links.
+* Search_or_Reset is legacy code that is no longer called
 * The CSS and JS scripts are linked to the Pug file in the scripts folder
 * Uses Ngrok to forward requests from my home router to the port
 
