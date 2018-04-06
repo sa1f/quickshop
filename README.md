@@ -48,7 +48,7 @@ This folder contains the iOS app for the user that allows for Registration/Viewi
 This folder contains the central NodeJs/Express server that controls the store. 
 	
 
-#### Getting Started
+**Getting Started**
 - You'll first need to install [NodeJs](https://nodejs.org/en/)
 - Navigate to the server folder of this project using the command line
 - run `npm i` to install the module dependencies
@@ -62,7 +62,7 @@ This folder contains the central NodeJs/Express server that controls the store.
 If you'd like to see the database contents, open the .sqlite file using [sqlite browser](http://sqlitebrowser.org/)
 
 
-#### Server structure
+**Server structure**
 
 * \_\_tests\_\_  - contains server tests
 * config - contains database config
