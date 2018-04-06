@@ -1,0 +1,40 @@
+PODS:
+  - Alamofire (4.7.0)
+  - SDWebImage/Core (4.3.3)
+  - SQLite.swift (0.11.4):
+    - SQLite.swift/standard (= 0.11.4)
+  - SQLite.swift/standard (0.11.4)
+
+DEPENDENCIES:
+  - Alamofire (from `https://github.com/Alamofire/Alamofire.git`, branch `master`)
+  - SDWebImage/Core (~> 4.0)
+  - SQLite.swift (from `https://github.com/stephencelis/SQLite.swift.git`, branch `master`)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - SDWebImage
+
+EXTERNAL SOURCES:
+  Alamofire:
+    :branch: master
+    :git: https://github.com/Alamofire/Alamofire.git
+  SQLite.swift:
+    :branch: master
+    :git: https://github.com/stephencelis/SQLite.swift.git
+
+CHECKOUT OPTIONS:
+  Alamofire:
+    :commit: ef488704b92a127cda34e9b62c1c6fbe0bf94c8a
+    :git: https://github.com/Alamofire/Alamofire.git
+  SQLite.swift:
+    :commit: c052d4153b617d6f16d26ac5b924afe0a6dd5874
+    :git: https://github.com/stephencelis/SQLite.swift.git
+
+SPEC CHECKSUMS:
+  Alamofire: 907e0a98eb68cdb7f9d1f541a563d6ac5dc77b25
+  SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
+  SQLite.swift: 3e3bee21da701b5b9f87c4a672cb54f233505692
+
+PODFILE CHECKSUM: d67fe39216e6f54c329bfad0c8bf1c6b398ff322
+
+COCOAPODS: 1.5.0
