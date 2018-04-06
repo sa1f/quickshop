@@ -55,7 +55,7 @@ If you'd like to see the database contents, open the .sqlite file using [sqlite 
 
 #### Server structure
 
-* __tests__  - contains server tests
+* \_\_tests\_\_  - contains server tests
 * config - contains database config
 * migrations - contains database migrations
 * models - contains database models
