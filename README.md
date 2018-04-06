@@ -52,8 +52,10 @@ This folder contains the fpga code to hash and mine blocks on the blockchain
 
 This folder contains the iOS app for the user that allows for Registration/Viewing Cart/Viewing past purchases
 
+**Getting Started**
 Open the file named "ImagePicker.xcworkspace" in the iOS folder using Xcode9. Connect to an iPhone5s - iOS 11.0.3 or use a iPhone 5s simulator; run and build the project.
 
+**Files structure**
 Here is a short description of the files in ImagePicker.xcworkspace:
 * FaceDetector.swift: This file contains functions that detects the location of parts of the face
 * MyAccountViewController.swift: This view controller manages the display of the logged in user's profile picture and username
