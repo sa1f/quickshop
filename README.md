@@ -32,6 +32,7 @@ This folder contains the server which serves the frontend view of the block chai
 * Search_or_Reset is legacy code that is no longer called
 * The CSS and JS scripts are linked to the Pug file in the scripts folder
 * Uses Ngrok to forward requests from my home router to the port
+* To run the server, type "node block_chain_server.js" in the terminal. The computer running the server will be listening on port 8080
 
 ### computer\_vision
 
