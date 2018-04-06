@@ -1,3 +1,3 @@
 <p align='center'>
-	<img src="server/public/images/logo.png">
+	<img style='width: 300px' src="server/public/images/logo.png">
 </p>
