@@ -21,7 +21,7 @@ Quickshop is a fully automated store with a central server, facial and object re
 
 Here's an overview of the structure of the project:
 
-### blockchain_frontend
+## blockchain_frontend
 
 This folder contains the server which serves the frontend view of the block chain. Quick summary:
 
@@ -30,20 +30,20 @@ This folder contains the server which serves the frontend view of the block chai
 * The CSS and JS scripts are linked to the Pug file in the scripts folder
 * Uses Ngrok to forward requests from my home router to the port
 
-### computer\_vision
+## computer\_vision
 
 This folder contains three python scripts that control the exit and entry cameras. A relay server is included to relay messages from these local scripts to the central server
 
-### de1
+## de1
 
 This folder contains the fpga code to hash and mine blocks on the blockchain
 
-### iOS
+## iOS
 
 This folder contains the iOS app for the user that allows for Registration/Viewing Cart/Viewing past purchases
 
 
-### server
+## server
 
 This folder contains the central NodeJs/Express server that controls the store. 
 	
