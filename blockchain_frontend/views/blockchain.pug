@@ -1,0 +1,79 @@
+html(lang='en')
+	head
+		meta(charset='utf-8' name='viewport' content='width=device-width, initial-scale=1.0')
+		title QuickShop
+		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/pugStyle.css')
+		script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js')
+		script(src='/scripts.js')
+	body
+		div(class='container-fluid')
+			div(class='row no-gutters' id='banner-row')
+				div(class='col-xs-4')
+					img(src='/logo.png')
+				div(class='col-xs-2')
+					p
+				div(class='col-xs-6')
+					form(class='banner' method='get' action='/')
+						button(class='banner_button' type='submit' ) Welcome
+					form(class='banner' method='get' action='/blockchain')
+						button(class='banner_button' id='active_button' type='submit') BlockChain
+					form(class='banner' method='get' action='/contactus')
+						button(class='banner_button' type='submit') Contact us
+			div(class='row no-gutters' id='header-row')
+				div(class='col-xs-12')
+					h2 Live View of BlockChain
+				div(class='col-xs-3')
+					div(class='dropdown')
+						button(class='dropbtn' id='filterButton') Filter by...
+						div(class='dropdown-content')
+							button(class='dropbtn' onclick='FilterNames()') Names
+							button(class='dropbtn' onclick='FilterDates()') Dates
+							button(class='dropbtn' onclick='FilterProducts()') Products
+							button(class='dropbtn' onclick='FilterHash()') Hash
+				div(class='col-xs-9')
+					input(type='text' id='search' onkeyup='updateTable()' placeholder='Filter...')
+			div(class='row' id='content-row')
+				div(class='col-xs-12')
+					div(class='table-responsive')
+								
+						table(id='blockchain_table' class='table table-bordered')
+							thead
+								tr
+									th='Block'
+									for block in blockNum
+										th= block
+							tbody
+								tr
+									th='Nonce'
+									for nonceVal in nonce
+										if nonceVal == null
+											td= 'Nonce not yet mined!'
+										else
+											td= nonceVal
+								tr(class='data')
+									th='Purchased By'
+									for name in data_name
+										td= name
+								tr(class='data')
+									th='Date of Purchase'
+									for date in data_date
+										td=date
+								tr(class='data')
+									th='Products'
+									for product in data_purchase
+										td=product
+								tr
+									th='Previous Hash'
+									for pHashVal in prevHash
+										td(class='hash')= pHashVal
+								tr
+									th='Current Hash'
+									for hashVal in currHash
+										if hashVal == null
+											td(class='hash')= 'Hash not available yet (Currently mining!)'
+										else
+											td(class='hash')= hashVal
+
+							
+

@@ -1,0 +1,60 @@
+html(lang='en')
+	head
+		meta(charset='utf-8' name='viewport' content='width=device-width, initial-scale=1.0')
+		title QuikShop
+		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/pugStyle.css')
+		script(src='/scripts.js')
+	body
+		div(class='container-fluid')
+			div(class='row no-gutters' style='height: 22%; display: block;')
+				div(class='col-xs-4')
+					img(src='/logo.png')
+				div(class='col-xs-2')
+					p
+				div(class='col-xs-6')
+					form(class='banner' method='get' action='/')
+						button(class='banner_button' type='submit' ) Welcome
+					form(class='banner' method='get' action='/blockchain')
+						button(class='banner_button' id='active_button' type='submit') BlockChain
+					form(class='banner' method='get' action='/contactus')
+						button(class='banner_button' type='submit') Contact us
+			div(class='row no-gutters' style='height: 10%; display: block;')
+				div(class='col-xs-12')
+					h2 Live View of BlockChain
+				div(class='col-xs-12')
+					form(action='/blockchain/search' method='get')
+						div(class='form-group')    
+							input(class='form-control' type='text' name='name' placeholder='Search...')
+							button(class='btn-primary') Submit
+			div(class='row' style='height: 68%; display: block;')
+				div(class='col-xs-12')
+					div(class='table-responsive')
+								if(blockNum.length)
+									table(id='blockchain table' class='table table-bordered')
+										thead
+											tr
+												th='Block'
+												for block in blockNum
+													th= block
+										tbody
+											tr
+												th='Nonce'
+												for nonceVal in nonce
+													td= nonceVal
+											tr(class='data')
+												th='Data'
+												for dataVal in data
+													td= dataVal
+											tr
+												th='Previous Hash'
+												for pHashVal in prevHash
+													td= pHashVal
+											tr
+												th='Current Hash'
+												for hashVal in currHash
+													td= hashVal
+
+								else
+									p No elements!
+

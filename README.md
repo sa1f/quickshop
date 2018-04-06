@@ -6,10 +6,11 @@
 
 This is a project done for CPEN 391. Group members include:
 
-- Saif Sajid (server + facial recognition)
 - Justin Awrey (Object detection + facial recognition)
 - Benjamin Lang (FPGA Hardware Accelerated Blockchain mining)
 - Qian Rui Chow (User iOS Mobile app)
+- Saif Sajid (server + facial recognition)
+
 
 Quickshop is a fully automated store with a central server, facial and object recognition services and a blockchain to store transactions.
 
@@ -18,6 +19,15 @@ You can view a demo of the store [here 📹](https://youtu.be/WYAmqCGjMSQ)
 
 
 Here's an overview of the structure of the project:
+
+### blockchain_frontend
+
+This folder contains the server which serves the frontend view of the block chain. Quick summary:
+
+* Reads data from /blocks endpoint, and renders a webpage in the Express Framework using the Pug View.
+* The html code is dynamically rendered in the Views folder, in the file called pugprac
+* The CSS and JS scripts are linked to the Pug file in the scripts folder
+* Uses Ngrok to forward requests from my home router to the port
 
 ### computer\_vision
 
@@ -66,5 +76,6 @@ If you'd like to see the database contents, open the .sqlite file using [sqlite 
 * facerec\_from\_webcam\_faster\_.py - [modified example](https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py) file from the face\_recognition\_ module. Allows for live registration of new faces on the server and live face recognition. Served as the basis for the entrance and exit cameras
 * gulpfile.js - Used to compile sass files
 * login\_face\_.py - used to recognize a face from a picture
+* server.js - This simply initiates the server on the local machine
 
 \ ゜o゜)ノ

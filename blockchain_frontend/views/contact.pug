@@ -1,0 +1,28 @@
+html(lang='en')
+	head
+		meta(charset='utf-8' name='viewport' content='width=device-width, initial-scale=1.0')
+		title QuickShop
+		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/pugStyle.css')
+		script(src='/scripts.js')
+	body
+		div(class='container-fluid')
+			div(class='row no-gutters' id='banner-row')
+				div(class='col-xs-4')
+					img(src='/logo.png')
+				div(class='col-xs-2')
+					p
+				div(class='col-xs-6')
+					form(class='banner' method='get' action='/')
+						button(class='banner_button' type='submit' ) Welcome
+					form(class='banner' method='get' action='/blockchain')
+						button(class='banner_button' type='submit') BlockChain
+					form(class='banner' method='get' action='/contactus')
+						button(class='banner_button' id='active_button' type='submit') Contact us
+			div(class='row no-gutters' id='header-row')
+				div(class='col-cs-12')
+					h2 Contact Information
+			div(class='row no-gutters' id='content-row')
+				div(class='col-xs-12')
+					h3 Email
+					p customersupport@quickshop.ca

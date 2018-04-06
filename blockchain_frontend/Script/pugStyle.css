@@ -1,0 +1,218 @@
+html{
+    height: 100%;
+}
+
+body{
+    margin: 0px;
+    height: 100%;
+    background: #dde2e3;
+}
+
+img{
+    height: 100%;
+    width: 100%;
+    background-color: #9aacb8;
+    border-bottom: solid;
+    border-width: medium;
+    border-color: #565656;
+}
+
+h2{
+	font-size: 3.5vw;
+	margin-top: 10px;
+	margin-bottom: 2%;
+	text-align: center;
+	max-width: 100%;
+}
+
+#banner-row{
+    height: 22%;
+    display: block;
+}
+
+#header-row{
+    height: 10%;
+    display: block;
+}
+
+#content-row{
+    height: 68%;
+    display: block;
+}
+
+.col-xs-2{
+	padding-right: 0;
+	padding-left: 0;
+}
+
+.col-xs-2 p{
+	background-color: #9aacb8;
+	height: 100%;
+	width: 100%;
+    border-bottom: solid;
+    border-color: #565656;
+	border-width: medium;
+
+}
+.col-xs-3{
+	padding-right: 0;
+}
+
+.col-xs-4{
+	padding-right: 0;
+	padding-left: 0;
+}
+
+.col-xs-6{
+	padding-right: 0;
+	padding-left: 0;
+}
+
+.col-xs-9{
+	padding-left: 0;
+}
+
+
+.banner{
+	display: inline-block;
+	overflow: auto;
+    background-color: #9aacb8;
+    height: 100%;
+    width: 33.3333333333333%;
+    float: top;
+    border-bottom: solid;
+    border-color: #565656;
+    border-width: medium;
+}
+
+.banner button{
+	width: 100%;
+	height: 100%;
+	background-color: inherit;
+	border: none;
+	font-size: 1.5vw;
+}
+
+.banner button:hover {
+	color: #154fff;
+}
+
+#active_button{
+	color: #154fff;
+}
+
+
+#search{
+	width: 50%;
+	margin-bottom: 10px;
+	font-size: 1.1vw;
+	height: auto;
+}
+
+
+tr.data{
+    height: 123px;
+    vertical-align: text-top;
+}
+
+tr{
+	font-size: 1vw;
+}
+
+table{
+    color: black;
+    background-color: #e5fafa;
+    table-layout: auto;
+    font-size: 1.5vw;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.dropbtn {
+    color: black;
+    width: 100%;
+    font-size: 1.1vw;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    background-color: inherit;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    background-color: inherit;
+}
+
+.dropdown-content button {
+    color: black;
+    text-decoration: none;
+    display: block;
+    font-size: 1.1vw;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    width: 100%;
+}
+
+@media only screen and (orientation: portrait){
+	#searchNames{
+		width: 75%;
+		font-size: 1.2vw;
+	}
+
+	#searchDates{
+		width: 75%;
+		font-size: 1.2vw;
+	}
+
+	#searchProducts{
+		width: 75%;
+		font-size: 1.2vw;
+	}
+
+    #banner-row{
+        height: 11%;
+    }
+
+    #header-row{
+        height: 5%;
+    }
+
+    #content-row{
+        height: 84%;
+    }
+
+    .banner button{
+        font-size: 2.2vw;
+    }
+
+    .introPara{
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+
+    tr{
+		font-size: 2vw;
+	}
+
+	.form-control{
+		font-size: 2vw;
+	}
+
+	.btn-primary{
+		font-size: 2vw;
+	}
+
+	.hash{
+		font-size: 1.5vw;
+	}
+}

@@ -1,0 +1,38 @@
+html(lang='en')
+	head
+		meta(charset='utf-8' name='viewport' content='width=device-width, initial-scale=1.0')
+		title QuickShop
+		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+		link(rel='stylesheet', href='style.css')
+		script(src='scripts.js')
+	body(onload = "openDefault()")
+		div(class='container-fluid')
+			div(class='row no-gutters' id='banner-row')
+				div(class='col-xs-4')
+					img(src='logo.png')
+				div(class='col-xs-2')
+					p
+				div(class='col-xs-6')
+					div(class='tab')
+					form(class='banner' method='get' action='/')
+						button(class='banner_button' id='active_button' type='submit' ) Welcome
+					form(class='banner' method='get' action='/blockchain')
+						button(class='banner_button' type='submit') BlockChain
+					form(class='banner' method='get' action='/contactus')
+						button(class='banner_button' type='submit') Contact us
+			div(class='row no-gutters' id='header-row')
+				div(class='col-xs-12')
+					h2 Welcome to Quickshop!
+			div(class='row' id='content-row')
+				div(class='col-xs-6')
+					p(class='introPara') This is Group 11's project QuickShop for CPEN391 Module 2. It involves multiple components integrated together to form a cohesive whole.
+					h4 Hardware
+					p(class='introPara') The De1-SoC hashes values continously, and mines for a correct nonce value that produces a valid hash. It sends this hash as well as the correct nonce value to a server
+					h4 Servers
+					p(class='introPara') Created via Nodejs, the server sends values to the De1-SoC for mining, and receives the mined values, which it stores in a SQL database. It listens for GET and POST requests, and responds accordingly as an Express app.
+					h4 Website
+					p(class='introPara') Depending on which GET request is received, different files are sent by the server to the client for webpage rendering. All HTML pages are written as .pug files, generated dynamically, and rendered via Express.
+					a(href='https://github.com/Mike-Yue/module2' target='_blank') Source Code
+				div(class='col-xs-6')
+					img(src='blockchain.png' style='max-width:100%; height: auto;')
+				
