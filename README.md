@@ -6,10 +6,11 @@
 
 This is a project done for CPEN 391. Group members include:
 
+- Mike Yue (Blockchain front end)
 - Justin Awrey (Object detection + facial recognition)
 - Benjamin Lang (FPGA Hardware Accelerated Blockchain mining)
 - Qian Rui Chow (User iOS Mobile app)
-- Saif Sajid (server + facial recognition)
+- Saif Sajid (Central server + db + facial recognition)
 
 
 Quickshop is a fully automated store with a central server, facial and object recognition services and a blockchain to store transactions.
