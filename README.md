@@ -1,3 +1,3 @@
 <p align='center'>
-	![](server/public/images/logo.png)
+	<img src="server/public/images/logo.png">
 </p>
