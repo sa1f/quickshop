@@ -55,18 +55,18 @@ This folder contains the iOS app for the user that allows for Registration/Viewi
 Open the file named "ImagePicker.xcworkspace" in the iOS folder using Xcode9. Connect to an iPhone5s - iOS 11.0.3 or use a iPhone 5s simulator; run and build the project.
 
 Here is a short description of the files in ImagePicker.xcworkspace:
--FaceDetector.swift: This file contains functions that detects the location of parts of the face
--MyAccountViewController.swift: This view controller manages the display of the logged in user's profile picture and username
--ViewController.swift: This view controller manages the registration user interface (face counts, picture uplaod etc.)
--CheckAVAuthorizationStatus.swift: File for Permission to use Camera in iPhone
--Main.storyboard: visual representation of the user interface of an iOS application, showing screens of content and the connections between those screens
--Assets.xcassets: Catalog to store icons and shop logo
--Info.plist: a structured text file that contains essential configuration information for the bundled app executable
--LoginViewController.swift: This view controller manages the user interface of login page
--MainMenuViewController.swift: This view controller manages the user interface of the main menu display
--BlockchainViewController.swift: This view controller manages the webview of blockchain transaction history
--AlamofireHTTPCalls.swift: Contains Get and Post call functions with Alamofire
--CartViewController.swift: Current user cart display user interface is managed by this view controller
+* FaceDetector.swift: This file contains functions that detects the location of parts of the face
+* MyAccountViewController.swift: This view controller manages the display of the logged in user's profile picture and username
+* ViewController.swift: This view controller manages the registration user interface (face counts, picture uplaod etc.)
+* CheckAVAuthorizationStatus.swift: File for Permission to use Camera in iPhone
+* Main.storyboard: visual representation of the user interface of an iOS application, showing screens of content and the connections between those screens
+* Assets.xcassets: Catalog to store icons and shop logo
+* Info.plist: a structured text file that contains essential configuration information for the bundled app executable
+* LoginViewController.swift: This view controller manages the user interface of login page
+* MainMenuViewController.swift: This view controller manages the user interface of the main menu display
+* BlockchainViewController.swift: This view controller manages the webview of blockchain transaction history
+* AlamofireHTTPCalls.swift: Contains Get and Post call functions with Alamofire
+* CartViewController.swift: Current user cart display user interface is managed by this view controller
 
 ## server
 
