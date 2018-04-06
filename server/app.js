@@ -10,7 +10,7 @@ const sharp = require('sharp'); // Image manipulation (Used for resizing uploade
 const spawn = require('child_process').spawn; // Used to spawn the face encoding python process
 const consola = require('consola') // Pretty console logging
 const apicache = require('apicache') // Caching for endpoints
-const superagent = require('superagent');
+const superagent = require('superagent'); // Used to make internal request
 
 
 
@@ -67,6 +67,13 @@ function generatePasswordHash(password) {
 }
 
 // -- User Management --
+
+/* Get or generate a session token for a given user
+ * Essentially serves as an internal way to manage logins/sessions
+ * 
+ * params:
+ *  name: {string which represents username} 
+ */
 function getOrGenerateSessionToken(name) {
     return new Promise((resolve, reject) => {
         User.findOne({
@@ -81,6 +88,7 @@ function getOrGenerateSessionToken(name) {
                 },
                 includes: [User]
             }).then(session => {
+                // If a session doesn't already exist, create one
                 if (!session) {
                     Session.create({
                             token: randString(),
@@ -88,17 +96,19 @@ function getOrGenerateSessionToken(name) {
                             UserId: user.id,
                             Cart: {}
                         }, {
+                            // Also create a cart for this session
                             include: [Cart]
                         }
 
-
                     ).then(session => {
+                        // Return the token
                         resolve(session.token);
                     }).catch(err => {
                         consola.error("An error occurred while trying to create a new session token");
                         reject(err);
                     })
                 } else {
+                    // If session already exists, send back token
                     resolve(session.token);
                 }
             }).catch(err => {
@@ -109,23 +119,16 @@ function getOrGenerateSessionToken(name) {
     });
 }
 
-function authenticate(name) {
-    if (!name)
-        return Promise.resolve(false);
-    return Session.findOne({
-        where: {
-            token: token,
-            valid: true
-        }
-    }).then(session => {
-        if (session)
-            return session;
-        else
-            return false;
-    });
-}
-
 // -- Process Requests --
+
+/* This function both sends a message to the console and the user as a JSON HTTP response.
+ * Default http error code is 500 internal server error
+ * 
+ * Params:
+ *  - response -> The response variable in an Express route 
+ *  - message -> {string}
+ *  - errorCode -> {integer representing http status code you want to use}
+ */
 function sendError(response, message, errorCode) {
     // Default http code is internal server error (500)
     let code = errorCode || 500;
@@ -133,6 +136,12 @@ function sendError(response, message, errorCode) {
     response.status(code).json(message);
 }
 
+/* Same as sendError, except only successful messages are sent (HTTP Status 200)
+ * 
+ * Params:
+ *  - response -> The response variable in an Express route 
+ *  - message -> {string}
+ */
 function sendSuccess(response, message) {
     consola.success(message);
     response.json(message);
@@ -140,10 +149,24 @@ function sendSuccess(response, message) {
 //#endregion
 
 //#region Global endpoints
+
+// Sends the Store Management Dashboard page
+// Screencast here: https://youtu.be/8BsaA3HJeXo
 app.get("/", (request, response) => {
     response.render('index');
 })
 
+/* Register user with picture or username/pw combo
+ * 
+ * POST /register 
+ * 
+ * Request:
+ *  - name: {string}
+ *  - password: {string}
+ *  - picture: {jpeg image file with 1 face}
+ * Response:
+ *  - If successful, then success message will be sent
+ */
 app.post('/register', upload.single('picture'), (request, response) => {
     if (!request.body.name) {
         return sendError(response, "Please enter a name", 422);
@@ -231,6 +254,19 @@ app.post('/register', upload.single('picture'), (request, response) => {
         });
 });
 
+/* Login user with picture or username/pw combo
+ * 
+ * POST /login
+ * 
+ * Request:
+ *  - name: {string}
+ *  - password: {string}
+ *  or
+ *  - picture: {jpeg image with 1 face}
+ * Response:
+ *  - If successful, then session token will be sent, with the possibility of a new session/cart 
+ *    also being created
+ */
 app.post('/login', upload.single('picture'), (request, response) => {
     if (!request.body.password && !request.body.name && (!request.file || !request.file.mimetype.includes("image"))) {
         return sendError(response, "Please enter a username/password or upload a picture", 422);
@@ -306,6 +342,17 @@ app.post('/login', upload.single('picture'), (request, response) => {
     }
 });
 
+/* Logout user, empty cart, put items back on shelf
+ * 
+ * POST /logout
+ * 
+ * Request:
+ *  - name: {string}
+ *  or
+ *  - picture: {jpeg image with 1 face}
+ * Response:
+ *  - If successful, then  success message will be sent
+ */
 app.post('/logout', upload.single('picture'), (request, response) => {
     if (!request.body.name && (!request.file || !request.file.mimetype.includes("image"))) {
         return sendError(response, "Please enter a username or upload a picture to logout", 422);
@@ -425,6 +472,19 @@ app.post('/logout', upload.single('picture'), (request, response) => {
     }
 });
 
+/* Get the dlib face encodings for all users
+ * 
+ * GET /face_encodings
+ * 
+ * Request:
+ * 
+ * Response:
+ *  [{
+ *      name: {string},
+ *      encoding: {numpy array that encodes the user's face}
+ *   }
+ *  ]
+ */
 app.get('/face_encodings', (request, response) => {
     User.findAll({
         attributes: ['name', 'faceEncoding'],
@@ -438,6 +498,7 @@ app.get('/face_encodings', (request, response) => {
     });
 });
 
+// Delete an existing user
 app.post('/delete_user', (request, response) => {
     consola.info("Deleting user " + request.body.name);
     const user_name = request.body.name;
@@ -452,6 +513,7 @@ app.post('/delete_user', (request, response) => {
     })
 });
 
+// Send the last block that needs hashing. DE1 polls this endpoint
 app.get('/needs_hashing', (request, response) => {
     Block.findAll({
         limit: 1,
@@ -472,6 +534,7 @@ app.get('/needs_hashing', (request, response) => {
     });
 });
 
+// Register a hash. This is where the DE1 sends its result
 app.post('/register_hash', (request, response) => {
     if (!request.body.block) {
         return sendError(response, "Please send block id");
@@ -509,6 +572,7 @@ app.post('/register_hash', (request, response) => {
     });
 });
 
+// Get all the blocks of the blockchain
 app.get('/blocks', (request, response) => {
     Block.findAll({}).then(blocks => {
         let result = [];
@@ -527,6 +591,8 @@ app.get('/blocks', (request, response) => {
 //#endregion
 
 //#region User endpoints
+
+// Show all users
 app.get('/users', (request, response) => {
     User.findAll({
             attributes: ['name'],
@@ -547,6 +613,7 @@ app.get('/users', (request, response) => {
         });
 });
 
+// Get user's profile picture
 app.get('/users/:name/picture', cache('1 hour'), (request, response) => {
     const user_name = request.params.name;
     User.findOne({
@@ -560,6 +627,24 @@ app.get('/users/:name/picture', cache('1 hour'), (request, response) => {
         });
 });
 
+/* Adds a product from a user's cart 
+ * 
+ * GET /users/{name}/cart/remove -> Where name is username
+ * 
+ * Request:
+ * 
+ * Response:
+ *  - If successful, then an object will be sent in the following format:
+ *  {
+ *      "products": [
+ *          {
+ *              name: {string},
+ *              quantity: {int},
+ *              price: {int}
+ *          }
+ *      ]
+ *  }
+ */
 app.get('/users/:name/cart', cache('5 seconds'), (request, response) => {
     const user_name = request.params.name;
 
@@ -611,6 +696,15 @@ app.get('/users/:name/cart', cache('5 seconds'), (request, response) => {
     });
 });
 
+/* Adds a product from a user's cart 
+ * 
+ * GET /users/{name}/cart/remove -> Where name is username
+ * 
+ * Request:
+ *  - product_name: {string}
+ * Response:
+ *  - If successful, then success message will be sent
+ */
 app.post('/users/:name/cart/add', function (request, response) {
     if (!request.body.product_name) {
         return sendError(response, "Please give a name for the product", 422)
@@ -674,7 +768,17 @@ app.post('/users/:name/cart/add', function (request, response) {
 
 });
 
-
+/* Removes a product from a user's cart 
+ * 
+ * 
+ * GET /users/{name}/cart/remove -> Where name is username
+ * 
+ * Request:
+ *  - product_name: {string}
+ * Response:
+ *  - If successful, then models/cart.js object will be sent to show the 
+ *    updated state
+ */
 app.post('/users/:name/cart/remove', function (request, response) {
     if (!request.body.product_name) {
         return sendError(response, "Please give a name for the product", 422)
@@ -731,7 +835,17 @@ app.post('/users/:name/cart/remove', function (request, response) {
     })
 });
 
-
+/* Performs a checkout of the user's current cart and logs them out
+ * Also creates a block for the purchase
+ * 
+ * GET /users/{name}/checkout -> Where name is username
+ * 
+ * Request:
+ * 
+ * Response:
+ *  - If successful, then models/user.js object will be sent to show the 
+ *    updated state
+ */
 app.get('/users/:name/checkout', function (request, response) {
     if (!request.params.name) {
         return sendError(response, "Please give a name for the user", 422)
@@ -812,7 +926,20 @@ app.get('/users/:name/checkout', function (request, response) {
     });
 });
 
-// TODO
+/* Gets all the purchases for a user 
+ * 
+ * GET /users/{name}/purchases -> where name represents the username of the user
+ * 
+ * Request:
+ * 
+ * Response:
+ *  - If successful, an array containing objects in the form of:
+ *     {
+ *      name: {username}
+ *      date: {date of purchase}
+ *      products: {an array of ProductInStore objects (from models/productinstore.js)}
+ *     }
+ */
 app.get('/users/:name/purchases', function (request, response) {
     if (!request.params.name) {
         return sendError(response, "Please give a name for the user", 422)
@@ -851,12 +978,33 @@ app.get('/users/:name/purchases', function (request, response) {
 //#endregion
 
 //#region Shelf endpoints
+
+/* Gets all the items on the shelf
+ * 
+ * GET /shelf/
+ * 
+ * Request:
+ * 
+ * Response:
+ *  - If successful, an array containing ProductInstore's as defined in models/productinstore.js
+ */
 app.get('/shelf', (request, response) => {
     ProductInStore.findAll({}).then(products => {
         response.json(products);
     });
 });
 
+/* Adds an item from the shelf
+ * 
+ * POST /shelf/add
+ * 
+ * Request:
+ *  - name: {string} -> Represents product name
+ * 
+ * Response:
+ *  - If successful, the updated quantity
+ *  - Else, an error message
+ */
 app.post('/shelf/add', function (request, response) {
     if (!request.body.name) {
         return sendError(response, "Please give a name for the product", 422)
@@ -890,6 +1038,17 @@ app.post('/shelf/add', function (request, response) {
     });
 });
 
+/* Removes an item from the shelf
+ * 
+ * POST /shelf/remove
+ * 
+ * Request:
+ *  - name: {string} -> Represents product name
+ * 
+ * Response:
+ *  - If successful, the updated quantity
+ *  - Else, an error message
+ */
 app.post('/shelf/remove', function (request, response) {
     if (!request.body.name) {
         return sendError(response, "Please give a name for the product", 422)
@@ -916,12 +1075,6 @@ app.post('/shelf/remove', function (request, response) {
 
 
 });
-
-// TODO
-app.post('/shelf/update_in_front', (request, response) => {
-
-});
-
 //#endregion
 
 module.exports = app;

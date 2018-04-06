@@ -27,8 +27,8 @@ html
     link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous")
 
 
-
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1')
     meta(name='apple-mobile-web-app-capable' content='yes')
@@ -37,6 +37,7 @@ html
 
   body.container.mb-5
       .row
+        //- Forms for login/register/delete
         .col-3
           .row
             form(data-lpignore="true" autocomplete="off" action='/register', method='POST', enctype='multipart/form-data')
@@ -140,8 +141,7 @@ html
         }
     });
 
-    let cacheUsers = "";
-    let cacheCart = "";
+    // Function to update users area
     let updateUsers = () => {
       $.get("/users", function(data) {
         $("#users").html("");
@@ -204,6 +204,7 @@ html
       });
     };
 
+    // Function to Update shelf
     let updateShelf = () => {
       var users;
       $.get("/users", function(users) {
@@ -294,16 +295,17 @@ html
       $("#pauseUsers").prop('checked', true);
     }
 
+    // Pause live updating when shelf area is clicked
     $("#shelf").on('click', () => {
       $("#pauseShelf").prop('checked', true);
     });
 
+    // Pause live updating when users area is clicked
     $("#users").on('click', () => {
       $("#pauseUsers").prop('checked', true);
     });
 
-    $
-    //TODO
+    // Live updates
     updateShelf();
     updateUsers();
     setInterval(() => { 
